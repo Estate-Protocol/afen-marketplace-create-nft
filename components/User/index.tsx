@@ -67,9 +67,9 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     const retrievedUser = localStorage.getItem("user");
     if (retrievedUser) {
-      if (!mobile) {
-        getProvider();
-      }
+      // if (!mobile) {
+      //   getProvider();
+      // }
 
       const savedUser: SavedUser = JSON.parse(retrievedUser);
 
@@ -86,7 +86,7 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     if (provider) {
       setSigner(provider.getSigner());
-      getBalance();
+      // getBalance();
     } else {
       if (!mobile) {
         getProvider();
@@ -208,7 +208,7 @@ export const UserProvider: React.FC = ({ children }) => {
       );
     }
 
-    return await getBalance();
+    // return await getBalance();
   };
 
   const getBalance = async () => {
