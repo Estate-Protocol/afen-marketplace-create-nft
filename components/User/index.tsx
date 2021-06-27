@@ -67,10 +67,6 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     const retrievedUser = localStorage.getItem("user");
     if (retrievedUser) {
-      // if (!mobile) {
-      //   getProvider();
-      // }
-
       const savedUser: SavedUser = JSON.parse(retrievedUser);
 
       if (savedUser.address) {
@@ -86,11 +82,10 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     if (provider) {
       setSigner(provider.getSigner());
-      // getBalance();
     } else {
-      if (!mobile) {
-        getProvider();
-      }
+      // if (!mobile) {
+      //   getProvider();
+      // }
     }
   }, [provider]);
 
