@@ -102,7 +102,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
       this.state.title.length &&
       this.state.afenPrice >= 0 &&
       this.state.bnbPrice >= 0 &&
-      this.state.royalty < 100 &&
+      this.state.royalty <= 20 &&
       this.state.description?.length
     );
   };
@@ -120,11 +120,11 @@ export default class CreateFormPage extends Component<IProps, IState> {
 
   handleRoyaltyInput = (data: string) => {
     const value = parseFloat(data);
-    if (value >= 100) {
+    if (value > 20) {
       this.setState({
         errors: {
           ...this.state.errors,
-          royalty: "Your royalty cannot be 100% or greater 😅",
+          royalty: "Your royalty cannot be greater than 20% 😅",
         },
       });
     } else {
@@ -256,7 +256,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                               placeholder="0.00"
                               append={
                                 <Image
-                                  src="/images/bnb.png"
+                                  src="/bnb.png"
                                   width="30"
                                   height="30"
                                 />
@@ -270,7 +270,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                             <TextInput
                               label={"Royalty"}
                               min={0}
-                              max={100}
+                              max={20}
                               required
                               error={this.state.errors?.royalty}
                               value={this.state.royalty}

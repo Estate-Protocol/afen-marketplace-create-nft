@@ -32,10 +32,10 @@ export default function Create() {
     let formData = new FormData();
     formData.append("file", data.upload);
     formData.append("title", data.title);
-    // formData.append("royalty", data.royalty.toString());
+    formData.append("royalty", data.royalty.toString());
     formData.append("description", data.description);
     formData.append("afenPrice", data.afenPrice.toString());
-    formData.append("nftPrice", data.bnbPrice.toString());
+    formData.append("bnbPrice", data.bnbPrice.toString());
     formData.append("wallet", user?.address);
 
     try {
@@ -70,13 +70,21 @@ export default function Create() {
 
         console.log(value);
       }
-    } catch (e) {
-      notify({
-        title: "Sorry",
-        status: "error",
-        text: "An error occured while trying to create NFT, please again later",
-      });
-      console.log(e);
+    } catch (err) {
+      if (err.code === 4001) {
+        notify({
+          title: "Cancelled",
+          status: "error",
+          text: "To create NFT please accept the request by clicking confirm when MetaMask dialog popups",
+        });
+      } else {
+        notify({
+          title: "Sorry",
+          status: "error",
+          text: "An error occured while trying to create NFT, please again later",
+        });
+      }
+      console.log(err);
     }
     setLoading(false);
   };

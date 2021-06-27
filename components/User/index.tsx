@@ -65,14 +65,7 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     const retrievedUser = localStorage.getItem("user");
     if (retrievedUser) {
-      // @ts-ignore
-      window.ethereum
-        .request({
-          method: "eth_requestAccounts",
-        })
-        .then(() => {
-          setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
-        });
+      getProvider();
       const savedUser: SavedUser = JSON.parse(retrievedUser);
 
       if (savedUser.address) {
@@ -89,9 +82,22 @@ export const UserProvider: React.FC = ({ children }) => {
     if (provider) {
       setSigner(provider.getSigner());
       getBalance();
+    } else {
+      getProvider();
     }
     // console.log(provider.getSigner());
   }, [provider]);
+
+  const getProvider = () => {
+    // @ts-ignore
+    window.ethereum
+      .request({
+        method: "eth_requestAccounts",
+      })
+      .then(() => {
+        setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
+      });
+  };
 
   const resetApp = () => {
     setAddress(null);
