@@ -8,6 +8,7 @@ import { api } from "../utils/axios";
 import useNotifier from "../hooks/useNotifier";
 import useContract from "../hooks/useContract";
 import useUser from "../hooks/useUser";
+import { useRouter } from "next/router";
 
 export interface CreateFormResponse {
   title?: string;
@@ -19,6 +20,7 @@ export default function Create() {
   const { contractSigned, setAbi } = useContract();
   const { user } = useUser();
   const { notify } = useNotifier();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<CreateFormResponse | null>(null);
@@ -76,7 +78,7 @@ export default function Create() {
           // nftContract.mint(value.chainId, priceA, value.blockNumber);
         }
 
-        console.log(value);
+        router.push(`/nft/${response?.data?.nft._id}`);
       }
     } catch (err) {
       if (err.code === 4001) {
