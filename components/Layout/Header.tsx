@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/Link";
+import Link from "next/link";
 import Button from "../IO/Button";
 import { useRouter } from "next/dist/client/router";
 
