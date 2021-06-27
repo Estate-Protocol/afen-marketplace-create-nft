@@ -66,6 +66,14 @@ export default function Create() {
             text: "Congratulation, NFT created.",
             status: "success",
           });
+          setTimeout(() => {
+            setMessage({
+              text: "Minting NFT...",
+              status: "info",
+            });
+          }, 3000);
+
+          // nftContract.mint(value.chainId, priceA, value.blockNumber);
         }
 
         console.log(value);

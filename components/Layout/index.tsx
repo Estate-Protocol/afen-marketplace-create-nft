@@ -46,7 +46,7 @@ export default function Body({ children }) {
         {/* Notification */}
         {notification && (
           <div className="absolute left-0 top-0 h-screen w-full bg-black bg-opacity-60 z-50 flex flex-col justify-center overscroll-none">
-            <div className="w-96 bg-white dark:bg-afen-blue mx-auto rounded-2xl p-8 shadow-lg">
+            <div className="w-4/5 md:w-96 bg-white dark:bg-afen-blue mx-auto rounded-2xl p-8 shadow-lg">
               <Flex spaceBetween center style="mb-5">
                 <Title style={`${notificationColor()}`}>
                   {notification?.title}

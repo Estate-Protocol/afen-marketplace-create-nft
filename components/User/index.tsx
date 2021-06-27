@@ -85,7 +85,6 @@ export const UserProvider: React.FC = ({ children }) => {
     } else {
       getProvider();
     }
-    // console.log(provider.getSigner());
   }, [provider]);
 
   const getProvider = () => {
@@ -111,7 +110,7 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const requestPermissions = async () => {
     // @ts-ignore
-    await window.ethereum.request({
+    await window?.ethereum?.request({
       method: "wallet_requestPermissions",
       params: [
         {
