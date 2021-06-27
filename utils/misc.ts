@@ -29,12 +29,14 @@ export const parseUrl = (url: string) => {
 };
 
 export const getDevice = () => {
-  // const { platform } = navigator;
-  if (/iPad|iPhone|iPod/.test(navigator?.platform)) {
-    return "ios";
-  }
-  if (/Android/.test(navigator?.platform)) {
-    return "android";
+  if (typeof window !== "undefined") {
+    // const { platform } = navigator;
+    if (/iPad|iPhone|iPod/.test(navigator?.platform)) {
+      return "ios";
+    }
+    if (/Android/.test(navigator?.platform)) {
+      return "android";
+    }
   }
 };
 

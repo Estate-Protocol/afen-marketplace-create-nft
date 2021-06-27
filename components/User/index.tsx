@@ -6,6 +6,7 @@ import useNotifier from "../../hooks/useNotifier";
 import { getUser } from "./api";
 import { IAssetData } from "../../types/WalletConnect";
 import { User as UserData } from "./types/User";
+import { isMobile } from "../../utils/misc";
 
 interface SavedUser {
   address: string;
@@ -61,11 +62,15 @@ export const UserProvider: React.FC = ({ children }) => {
   );
 
   const { notify } = useNotifier();
+  const mobile = isMobile();
 
   React.useEffect(() => {
     const retrievedUser = localStorage.getItem("user");
     if (retrievedUser) {
-      getProvider();
+      if (!mobile) {
+        getProvider();
+      }
+
       const savedUser: SavedUser = JSON.parse(retrievedUser);
 
       if (savedUser.address) {
@@ -83,7 +88,9 @@ export const UserProvider: React.FC = ({ children }) => {
       setSigner(provider.getSigner());
       getBalance();
     } else {
-      getProvider();
+      if (!mobile) {
+        getProvider();
+      }
     }
   }, [provider]);
 

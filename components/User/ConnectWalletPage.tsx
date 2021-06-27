@@ -5,7 +5,7 @@ import Flex from "../Layout/Flex";
 import Container from "../Layout/Container";
 import Title from "../IO/Title";
 import Typography from "../IO/Typography";
-import { getUser } from "./api";
+// import { getUser } from "./api";
 import useUser from "../../hooks/useUser";
 import { isMobile } from "../../utils/misc";
 import { BsArrowRight } from "react-icons/bs";
@@ -14,9 +14,10 @@ export default function ConnectWalletPage() {
   const { user, connectWallet, mobileWalletConnect } = useUser();
 
   const handleMobileConnection = async () => {
-    mobileWalletConnect.walletConnectInit().then(async () => {
-      await getUser(user.address);
-    });
+    mobileWalletConnect.walletConnectInit();
+    // .then(async () => {
+    //   await getUser(user.address);
+    // });
   };
 
   return (
