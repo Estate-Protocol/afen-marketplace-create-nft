@@ -5,7 +5,7 @@ import useUser from "../../hooks/useUser";
 
 export type IContractContext = {
   contract: ethers.Contract | null;
-  contractSigned: ethers.Contract | null;
+  contractSigned: any;
   setAbi: Dispatch<SetStateAction<{ [key: string]: any }[]>>;
 };
 

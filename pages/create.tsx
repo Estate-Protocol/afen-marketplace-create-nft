@@ -27,7 +27,7 @@ export default function Create() {
 
   const createNFT = async (data: CreateFormInput) => {
     setLoading(true);
-    const nftContract = contractSigned as unknown as AfenNft;
+    const nftContract = contractSigned as AfenNft;
 
     let formData = new FormData();
     formData.append("file", data.upload);
