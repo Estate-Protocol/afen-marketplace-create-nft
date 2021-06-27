@@ -236,7 +236,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                               required
                               value={this.state.afenPrice}
                               type="number"
-                              placeholder="0.00"
+                              placeholder="0"
                               append={
                                 <Image src="/logo.png" width="30" height="30" />
                               }
@@ -253,13 +253,9 @@ export default class CreateFormPage extends Component<IProps, IState> {
                               required
                               value={this.state.bnbPrice}
                               type="number"
-                              placeholder="0.00"
+                              placeholder="0"
                               append={
-                                <Image
-                                  src="/bnb.png"
-                                  width="30"
-                                  height="30"
-                                />
+                                <Image src="/bnb.png" width="30" height="30" />
                               }
                               onChange={(data) =>
                                 this.setState({ bnbPrice: data })
