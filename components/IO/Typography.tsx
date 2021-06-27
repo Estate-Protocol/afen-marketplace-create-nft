@@ -43,7 +43,7 @@ export default function Typography({
     bold && "font-semibold",
   ]
     .toString()
-    .replaceAll(",", " ");
+    .replace(/,/g, " ");
 
   return (
     <p
