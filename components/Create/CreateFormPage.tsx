@@ -100,8 +100,8 @@ export default class CreateFormPage extends Component<IProps, IState> {
     return (
       this.state.upload &&
       this.state.title.length &&
-      this.state.afenPrice >= 0 &&
-      this.state.bnbPrice >= 0 &&
+      this.state.afenPrice > 0 &&
+      this.state.bnbPrice > 0 &&
       this.state.royalty <= 20 &&
       this.state.description?.length
     );
