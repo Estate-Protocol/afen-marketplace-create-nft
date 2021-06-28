@@ -102,8 +102,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
     return (
       this.state.upload &&
       this.state.title.length &&
-      this.state.afenPrice > 0 &&
-      this.state.bnbPrice > 0 &&
+      (this.state.afenPrice > 0 || this.state.bnbPrice > 0) &&
       this.state.royalty <= 20 &&
       this.state.description?.length
     );
@@ -235,22 +234,6 @@ export default class CreateFormPage extends Component<IProps, IState> {
                     <div className="overflow-hidden">
                       <div className=" sm:pb-6">
                         <div className="grid grid-cols-12 gap-6">
-                          {/* <div className="col-span-6">
-                            <TextInput
-                              label="AFEN Price"
-                              min={0}
-                              required
-                              value={this.state.afenPrice}
-                              type="number"
-                              placeholder="0"
-                              append={
-                                <Image src="/logo.png" width="30" height="30" />
-                              }
-                              onChange={(data) =>
-                                this.setState({ afenPrice: data })
-                              }
-                            />
-                          </div> */}
                           <div
                             className={`col-span-6 pb-4 ${
                               this.state.currencySelected === "AFEN"
@@ -297,6 +280,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                               }
                               type="number"
                               placeholder="0"
+                              // description="Price cannot be 0"
                               append={
                                 <Image
                                   src={
