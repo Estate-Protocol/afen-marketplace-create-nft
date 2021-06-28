@@ -9,10 +9,10 @@ export interface NFT {
   wallet: string;
   afenPrice: number;
   bnbPrice: number;
-  price: 9122;
-  width?: 10;
-  height?: 10;
-  depth?: 10;
+  price: number;
+  width?: number;
+  height?: number;
+  depth?: number;
   createdAt: string;
   updatedAt: string;
 }

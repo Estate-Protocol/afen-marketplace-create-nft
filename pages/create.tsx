@@ -3,12 +3,13 @@ import CreateFormPage, { CreateFormInput } from "../components/Create";
 import ConnectWalletPage from "../components/User/ConnectWalletPage";
 import { AfenNft } from "../contracts/types";
 import { AFEN_NFT_ABI } from "../contracts/abis/AfenNFT";
-import { BigNumber } from "ethers";
+import { BigNumber, ContractTransaction } from "ethers";
 import { api } from "../utils/axios";
 import useNotifier from "../hooks/useNotifier";
 import useContract from "../hooks/useContract";
 import useUser from "../hooks/useUser";
 import { useRouter } from "next/router";
+import { NFT } from "../types/NFT";
 
 export interface CreateFormResponse {
   title?: string;
@@ -27,16 +28,7 @@ export default function Create() {
 
   setAbi(AFEN_NFT_ABI);
 
-  const createNFT = async (data: CreateFormInput) => {
-    setLoading(true);
-    const nftContract = contractSigned as AfenNft;
-
-    if (data.currencySelected === "AFEN") {
-      data.bnbPrice = 0;
-    } else {
-      data.afenPrice = 0;
-    }
-
+  const saveNFT = async (data: CreateFormInput): Promise<NFT> => {
     let formData = new FormData();
     formData.append("file", data.upload);
     formData.append("title", data.title);
@@ -45,46 +37,114 @@ export default function Create() {
     formData.append("afenPrice", data.afenPrice.toString());
     formData.append("bnbPrice", data.bnbPrice.toString());
     formData.append("wallet", user?.address);
+    const response = await api.post("/nft/create/", formData, {
+      headers: {
+        "Content-type": "multipart/form-data",
+        type: "formData",
+      },
+    });
 
-    try {
-      const response = await api.post("/nft/create/", formData, {
-        headers: {
-          "Content-type": "multipart/form-data",
-          type: "formData",
-        },
+    if (response.status === 200) {
+      setMessage({
+        text: "Art Saved",
+        status: "success",
       });
+    }
 
-      if (response.status === 200) {
+    return response.data.nft;
+  };
+
+  const createNFT = async (
+    nft: NFT,
+    afen,
+    bnb,
+    contract: AfenNft
+  ): Promise<ContractTransaction & { nft_id: string }> => {
+    const priceA = BigNumber.from(afen);
+    const priceB = BigNumber.from(bnb);
+    const value = await contract.create_nft(nft.fileHash, priceA, priceB);
+
+    if (value.hash) {
+      setTimeout(() => {
         setMessage({
-          text: "Art Saved",
-          status: "success",
+          status: "info",
+          text: "Minting NFT...",
         });
+      }, 3000);
+    }
 
-        const priceA = BigNumber.from(data.afenPrice);
-        const priceB = BigNumber.from(data.bnbPrice);
+    // @ts-ignore
+    return value;
+  };
 
-        const value = await nftContract.create_nft(
-          response.data.nft.fileHash,
-          priceA,
-          priceB
+  const mintNFT = async (
+    nftId: string,
+    price,
+    selectedCurrency: number,
+    contract: AfenNft
+  ): Promise<ContractTransaction> => {
+    price = BigNumber.from(price);
+    const mint = await contract.mint(nftId, price, selectedCurrency);
+
+    if (mint.hash) {
+      setMessage({
+        text: "Congratulation, NFT created.",
+        status: "success",
+      });
+    }
+
+    return mint;
+  };
+
+  const handleSubmit = async (data: CreateFormInput) => {
+    setLoading(true);
+    try {
+      const nftContract = contractSigned as AfenNft;
+
+      let price = 0;
+
+      if (data.currencySelected === "AFEN") {
+        data.bnbPrice = 0;
+        price = data.afenPrice;
+      } else {
+        data.afenPrice = 0;
+        price = data.bnbPrice;
+      }
+
+      const nft = await saveNFT(data);
+
+      if (nft) {
+        const createdNft = await createNFT(
+          nft,
+          data.afenPrice,
+          data.bnbPrice,
+          nftContract
         );
 
-        if (value.hash) {
-          setMessage({
-            text: "Congratulation, NFT created.",
-            status: "success",
-          });
-          setTimeout(() => {
-            setMessage({
-              text: "Minting NFT...",
-              status: "info",
+        if (createdNft.hash) {
+          // update nftId
+          const response = await api.post(
+            "/nft/update/",
+            // @ts-ignore
+            { nftId: value.nft_id },
+          );
+
+          const mintedNFT = await mintNFT(
+            createdNft.nft_id,
+            price,
+            data.currencySelected === "AFEN" ? 0 : 1,
+            nftContract
+          );
+
+          if (mintedNFT) {
+            notify({
+              status: "success",
+              title: "Done!",
+              text: "Your NFT had been minted",
             });
-          }, 3000);
-
-          // nftContract.mint(value.chainId, priceA, value.blockNumber);
+            router.push(`/nft/${response?.data?.nft._id}`);
+          }
         }
-
-        router.push(`/nft/${response?.data?.nft._id}`);
       }
     } catch (err) {
       if (err.code === 4001) {
@@ -107,7 +167,7 @@ export default function Create() {
 
   return user?.address ? (
     <CreateFormPage
-      onSubmit={createNFT}
+      onSubmit={handleSubmit}
       wallet={user?.address}
       loading={loading}
       message={message}
