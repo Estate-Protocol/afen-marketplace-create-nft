@@ -212,7 +212,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                                 </label>
                               </div>
                               <p className="text-xs text-gray-500 mt-4">
-                                PNG, JPG, GIF only up to 10MB
+                                PNG, JPG, GIF only up to 30MB
                               </p>
                             </div>
                           </div>

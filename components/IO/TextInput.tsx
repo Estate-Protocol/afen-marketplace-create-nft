@@ -54,7 +54,7 @@ export default function TextInput({
           name={slugifyText(label)}
           value={value}
           type={type}
-          pattern={type === "number" ? "^[0-9]" : ""}
+          pattern={type === "number" && "^[0-9]"}
           disabled={disabled}
           placeholder={placeholder}
           required={required}
