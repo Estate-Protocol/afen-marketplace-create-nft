@@ -160,9 +160,9 @@ export default class CreateFormPage extends Component<IProps, IState> {
           <div className="lg:pr-10 w-full md:w-1/2 lg:w-3/5">
             <Title>Create NFT</Title>
             <Typography sub style="md:w-3/4">
-              You can set how you want your NFT sold in two formats, by setting
-              a fixed price or auction. We will notify you anytime your art has
-              been bought or a bid has been placed.
+              To create a NFT simply fill in the required fields below and we
+              will take it from there. List your NFT with AFEN token or BNB.
+              Royalty is capped at 20%.
             </Typography>
 
             <form onSubmit={this.handleSubmit}>
