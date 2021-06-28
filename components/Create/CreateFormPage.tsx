@@ -20,6 +20,7 @@ export interface CreateFormInput {
   title: string;
   description?: string;
   royalty?: number;
+  currencySelected: "AFEN" | "BNB";
   properties?: {
     [key: string]: string;
   }[];
@@ -58,6 +59,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
       title: "",
       description: "",
       properties: [],
+      currencySelected: "AFEN",
       errors: null,
       previewImage: null,
     };
@@ -139,6 +141,10 @@ export default class CreateFormPage extends Component<IProps, IState> {
     this.setState({
       royalty: parseFloat(data),
     });
+  };
+
+  handlePriceSelection = (input: "AFEN" | "BNB") => {
+    this.setState({ currencySelected: input });
   };
 
   handleSubmit = (e) => {
@@ -229,7 +235,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                     <div className="overflow-hidden">
                       <div className=" sm:pb-6">
                         <div className="grid grid-cols-12 gap-6">
-                          <div className="col-span-6">
+                          {/* <div className="col-span-6">
                             <TextInput
                               label="AFEN Price"
                               min={0}
@@ -244,22 +250,69 @@ export default class CreateFormPage extends Component<IProps, IState> {
                                 this.setState({ afenPrice: data })
                               }
                             />
+                          </div> */}
+                          <div
+                            className={`col-span-6 pb-4 ${
+                              this.state.currencySelected === "AFEN"
+                                ? "border-afen-yellow  border-b-2"
+                                : ""
+                            } cursor-pointer`}
+                            onClick={() => this.handlePriceSelection("AFEN")}
+                          >
+                            <Image src="/logo.png" width="30" height="30" />
+                            <Typography bold>AFEN</Typography>
+                            <Typography sub size="small">
+                              Your NFT would be listed using the AFEN token.
+                            </Typography>
                           </div>
 
-                          <div className="col-span-6">
+                          <div
+                            className={`col-span-6 cursor-pointer ${
+                              this.state.currencySelected === "BNB"
+                                ? "border-afen-yellow  border-b-2"
+                                : ""
+                            }`}
+                            onClick={() => this.handlePriceSelection("BNB")}
+                          >
+                            <Image src="/bnb.png" width="30" height="30" />
+                            <Typography bold>BNB</Typography>
+                            <Typography sub size="small">
+                              Your NFT would be listed using BNB.
+                            </Typography>
+                          </div>
+
+                          <div className="col-span-12">
                             <TextInput
-                              label="BNB Price"
+                              label={`${
+                                this.state.currencySelected === "AFEN"
+                                  ? "AFEN"
+                                  : "BNB"
+                              } Price`}
                               min={0}
                               required
-                              value={this.state.bnbPrice}
+                              value={
+                                this.state.currencySelected === "AFEN"
+                                  ? this.state.afenPrice
+                                  : this.state.bnbPrice
+                              }
                               type="number"
                               placeholder="0"
                               append={
-                                <Image src="/bnb.png" width="30" height="30" />
+                                <Image
+                                  src={
+                                    this.state.currencySelected === "AFEN"
+                                      ? "/logo.png"
+                                      : "/bnb.png"
+                                  }
+                                  width="30"
+                                  height="30"
+                                />
                               }
-                              onChange={(data) =>
-                                this.setState({ bnbPrice: data })
-                              }
+                              onChange={(data) => {
+                                this.state.currencySelected === "AFEN"
+                                  ? this.setState({ afenPrice: data })
+                                  : this.setState({ bnbPrice: data });
+                              }}
                             />
                           </div>
                           <div className="col-span-full">
@@ -445,7 +498,10 @@ export default class CreateFormPage extends Component<IProps, IState> {
                     Price
                   </Typography>
                   <Typography bold style="text-xl">
-                    {this.state?.afenPrice.toString()} AFEN
+                    {this.state?.currencySelected === "AFEN"
+                      ? this.state.afenPrice.toString()
+                      : this.state.bnbPrice.toString()}{" "}
+                    {this.state.currencySelected}
                   </Typography>
                 </div>
               </div>

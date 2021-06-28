@@ -31,6 +31,12 @@ export default function Create() {
     setLoading(true);
     const nftContract = contractSigned as AfenNft;
 
+    if (data.currencySelected === "AFEN") {
+      data.bnbPrice = 0;
+    } else {
+      data.afenPrice = 0;
+    }
+
     let formData = new FormData();
     formData.append("file", data.upload);
     formData.append("title", data.title);

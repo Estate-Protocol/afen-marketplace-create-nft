@@ -89,6 +89,22 @@ export default function Token({ nft }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
 
+  const getPrice = () => {
+    let price = {
+      currency: "AFEN",
+      amount: nft.afenPrice,
+    };
+
+    if (nft.afenPrice === 0) {
+      price = {
+        currency: "BNB",
+        amount: nft.bnbPrice,
+      };
+    }
+
+    return price;
+  };
+
   return isFallback ? (
     <div></div>
   ) : (
@@ -133,7 +149,7 @@ export default function Token({ nft }: NFTPageProps) {
                 Price
               </Typography>
               <Typography style="text-xl md:text-3xl text-right" bold>
-                {nft?.afenPrice} AFEN
+                {getPrice().amount} {getPrice().currency}
               </Typography>
             </div>
           </Flex>
