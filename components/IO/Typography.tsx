@@ -21,6 +21,8 @@ export default function Typography({
 }: TypographyProps) {
   const getTypographySize = () => {
     switch (size) {
+      case "large":
+        return "text-xl md:text-2xl";
       case "medium":
         return "text-lg";
       case "medium":

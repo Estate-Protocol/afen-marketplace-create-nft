@@ -8,6 +8,7 @@ import Flex from "../Layout/Flex";
 import Button from "../IO/Button";
 import Image from "next/image";
 import { CreateFormResponse } from "../../pages/create";
+import Router from "next/router";
 // import MenuDropdown from "@/design-system/MenuDropdown";
 
 export interface CreateFormInput {
@@ -454,7 +455,12 @@ export default class CreateFormPage extends Component<IProps, IState> {
                     {this.state?.title || "---"}
                   </Title>
                   <div>
-                    <div className="flex items-center mt-1 cursor-pointer">
+                    <div
+                      className="flex items-center mt-1 cursor-pointer"
+                      onClick={() =>
+                        Router.push({ pathname: `/user/${this.props.wallet}` })
+                      }
+                    >
                       <div className="overflow-hidden rounded-full mr-1">
                         {/* {this.props.user?.avatar && (
                           <Image

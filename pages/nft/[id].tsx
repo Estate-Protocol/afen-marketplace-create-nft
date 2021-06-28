@@ -10,30 +10,11 @@ import { api } from "../../utils/axios";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import moment from "moment";
-import Button from "../../components/IO/Button";
 import { BsArrowUpRight } from "react-icons/bs";
+import { NFT } from "../../types/NFT";
 
 interface NFTPageProps {
   nft: NFT;
-}
-
-export interface NFT {
-  isAuction: boolean;
-  minimunBid: number;
-  _id: string;
-  fileHash: string;
-  path?: string;
-  title: string;
-  description: string;
-  wallet: string;
-  afenPrice: number;
-  bnbPrice: number;
-  price: 9122;
-  width?: 10;
-  height?: 10;
-  depth?: 10;
-  createdAt: string;
-  updatedAt: string;
 }
 
 // getStaticPaths
@@ -86,7 +67,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 const tabs = ["Description", "Details"];
 
 export default function Token({ nft }: NFTPageProps) {
-  const { isFallback } = useRouter();
+  const { isFallback, push } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const getPrice = () => {
@@ -130,7 +111,10 @@ export default function Token({ nft }: NFTPageProps) {
                 {nft?.title}
               </Title>
               <Link href="/profile/artist">
-                <div className="flex items-end mt-1 cursor-pointer">
+                <div
+                  className="flex items-end mt-1 cursor-pointer"
+                  onClick={() => push(`/user/${nft?.wallet}`)}
+                >
                   {/* <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
                     <Image
                       src={nft?.userId}
