@@ -130,13 +130,14 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const connectWallet = async () => {
     try {
+      getProvider()
       // @ts-ignore
-      window.ethereum.enable().then(
-        setProvider(
-          // @ts-ignore
-          new ethers.providers.Web3Provider(window.ethereum)
-        )
-      );
+      // window.ethereum.enable().then(
+      //   setProvider(
+      //     // @ts-ignore
+      //     new ethers.providers.Web3Provider(window.ethereum)
+      //   )
+      // );
 
       setSigner(provider?.getSigner());
 

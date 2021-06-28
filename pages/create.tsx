@@ -123,27 +123,27 @@ export default function Create() {
 
         if (createdNft.hash) {
           // update nftId
-          const response = await api.post(
-            "/nft/update/",
-            // @ts-ignore
-            { nftId: value.nft_id },
-          );
+          // const response = await api.post(
+          //   "/nft/update/",
+          //   // @ts-ignore
+          //   { nftId: value.nft_id },
+          // );
 
-          const mintedNFT = await mintNFT(
-            createdNft.nft_id,
-            price,
-            data.currencySelected === "AFEN" ? 0 : 1,
-            nftContract
-          );
+          // const mintedNFT = await mintNFT(
+          //   createdNft.nft_id,
+          //   price,
+          //   data.currencySelected === "AFEN" ? 0 : 1,
+          //   nftContract
+          // );
 
-          if (mintedNFT) {
-            notify({
-              status: "success",
-              title: "Done!",
-              text: "Your NFT had been minted",
-            });
-            router.push(`/nft/${response?.data?.nft._id}`);
-          }
+          // if (mintedNFT) {
+          // notify({
+          //   status: "success",
+          //   title: "Done!",
+          //   text: "Your NFT had been minted",
+          // });
+          router.push(`/nft/${nft?._id}`);
+          // }
         }
       }
     } catch (err) {

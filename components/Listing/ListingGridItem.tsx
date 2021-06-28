@@ -15,6 +15,22 @@ export default function HomeListingGridItem({
   width,
   onClick,
 }: ListingGridItemProps) {
+  const getPrice = () => {
+    let price = {
+      currency: "AFEN",
+      amount: item.afenPrice,
+    };
+
+    if (item.afenPrice === 0) {
+      price = {
+        currency: "BNB",
+        amount: item.bnbPrice,
+      };
+    }
+
+    return price;
+  };
+
   return (
     <div
       className={`cursor-pointer bg-gray-500 border dark:border-gray-700 overflow-hidden rounded-xl ${
@@ -38,7 +54,9 @@ export default function HomeListingGridItem({
           </Typography>
         </Flex>
 
-        <Typography style="font-semibold">{item.price} BNB</Typography>
+        <Typography style="font-semibold">
+          {getPrice().amount} {getPrice().currency}
+        </Typography>
         {/* <Typography textWidth="w-full" truncate sub size="x-small">
           {item.description}
         </Typography> */}

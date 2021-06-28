@@ -23,7 +23,7 @@ export const ContractProvider: React.FC = ({ children }) => {
   const { signer } = useUser();
 
   const chainAddress =
-    process.env.CHAIN_ADDRESS || "0xA275f29f9B54b5b7dD6292B7A9667d27de10aC78";
+    process.env.CHAIN_ADDRESS || "0x3F6A1eB55c7fb12177b940385556AfC4Cc83140b";
   const provider = ethers.getDefaultProvider();
   // const signer = ethers.Wallet.createRandom().connect(provider);
 
