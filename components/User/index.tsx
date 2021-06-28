@@ -72,9 +72,9 @@ export const UserProvider: React.FC = ({ children }) => {
       if (savedUser.address) {
         setUser(savedUser.user);
         setAddress(savedUser.address);
-        getBalance().finally(() => {
-          return;
-        });
+        // getBalance().finally(() => {
+        //   return;
+        // });
       }
     }
   }, []);
@@ -83,9 +83,9 @@ export const UserProvider: React.FC = ({ children }) => {
     if (provider) {
       setSigner(provider.getSigner());
     } else {
-      // if (!mobile) {
-      //   getProvider();
-      // }
+      if (!mobile) {
+        getProvider();
+      }
     }
   }, [provider]);
 
