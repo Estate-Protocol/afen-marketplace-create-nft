@@ -161,9 +161,9 @@ export default class CreateFormPage extends Component<IProps, IState> {
           <div className="lg:pr-10 w-full md:w-1/2 lg:w-3/5">
             <Title>Create NFT</Title>
             <Typography sub style="md:w-3/4">
-              To create a NFT simply fill in the required fields below and we
-              will take it from there. List your NFT with AFEN token or BNB.
-              Royalty is capped at 20%.
+              Start your NFT journey by creating your first NFT. Notifications
+              will be sent to you on status of your listed collectible. Royalty
+              is capped at 20%.
             </Typography>
 
             <form onSubmit={this.handleSubmit}>

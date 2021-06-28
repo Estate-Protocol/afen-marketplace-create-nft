@@ -19,8 +19,7 @@ export default function Home() {
             <div className="md:w-72 mb-4">
               <Title style="mb-2">Now moving to Phase 2 😎</Title>
               <Typography style="mb-2" sub>
-                You can now create NFTs and find it in your wallet, give it a
-                try!
+                Create a digital collecible! Start minting
               </Typography>
               <p className="text-sm text-gray-500"></p>
 
