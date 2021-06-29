@@ -51,11 +51,11 @@ export default function Header() {
           <Typography bold style="mr-8">
             <a href="/https://link.medium.com/dJY0veBUlgb">Get Started</a>
           </Typography>
-          {userData.address && (
-            <Typography bold style="mr-8">
-              <Link href={`/user/${userData.address}`}>NFTs</Link>
-            </Typography>
-          )}
+
+          <Typography bold style="mr-8">
+            <Link href={`/user/${userData.address}`}>NFTs</Link>
+          </Typography>
+
           <Button type="primary" onClick={() => router.push("/create")}>
             Create NFT
           </Button>
@@ -133,11 +133,9 @@ export default function Header() {
                             Get Started
                           </a>
                         </Typography>
-                        {userData.address && (
-                          <Typography style="mt-3">
-                            <Link href={`/nft/${userData.address}`}>NFTs</Link>
-                          </Typography>
-                        )}
+                        <Typography style="mt-3">
+                          <Link href={`/nft/${userData.address}`}>NFTs</Link>
+                        </Typography>
                       </div>
                     </>
                   )}
