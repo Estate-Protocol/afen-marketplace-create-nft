@@ -65,9 +65,9 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 
   const nfts: NFT[] = response?.data.list || [];
 
-  if (!nfts) {
-    return { notFound: true };
-  }
+  // if (!nfts) {
+  //   return { notFound: true };
+  // }
 
   return { props: { nfts }, revalidate: 1 };
 };
@@ -84,7 +84,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ nfts }) => {
     <div>
       <div
         className="w-screen h-80 relative bg-gray-100 dark:bg-gray-900"
-        style={{ minHeight: "300px", height: "380px" }}
+        style={{ minHeight: "280px", height: "280px" }}
       ></div>
       <div
         className="rounded-full h-40 w-40 shadow-md p-2 ring-4 ring-afen-yellow  flex items-center justify-center relative overflow-hidden -mt-20 mb-8 mx-auto bg-gray-100"

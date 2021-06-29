@@ -159,7 +159,7 @@ export default function Header() {
                         </a>
                       </Typography>
                       <Typography style="mt-3">
-                        <Link href={`/nft/` + userData.address}>
+                        <Link href={`/user/` + userData.address}>
                           My Collection
                         </Link>
                       </Typography>
