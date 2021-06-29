@@ -60,7 +60,7 @@ export default class WalletConnectActions {
     }
 
     this.connector.on("session_update", async (error, payload) => {
-      console.log(`connector.on("session_update")`);
+      // console.log(`connector.on("session_update")`);
 
       if (error) {
         throw error;
@@ -74,7 +74,7 @@ export default class WalletConnectActions {
     });
 
     this.connector.on("connect", (error, payload) => {
-      console.log(`connector.on("connect")`);
+      // console.log(`connector.on("connect")`);
 
       if (error) {
         throw error;
@@ -84,7 +84,7 @@ export default class WalletConnectActions {
     });
 
     this.connector.on("disconnect", (error) => {
-      console.log(`connector.on("disconnect")`);
+      // console.log(`connector.on("disconnect")`);
 
       if (error) {
         throw error;

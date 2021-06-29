@@ -67,9 +67,11 @@ export default function Header() {
             </a>
           </Typography>
 
-          <Typography style="mr-8">
-            <Link href={`/user/` + userData.address}>My Collection</Link>
-          </Typography>
+          {userData.address && (
+            <Typography style="mr-8">
+              <Link href={`/user/` + userData.address}>My Collection</Link>
+            </Typography>
+          )}
 
           <Button type="primary" onClick={() => router.push("/create")}>
             Create NFT
@@ -157,24 +159,26 @@ export default function Header() {
                         </div>
                       </Flex>
                     )}
-                    <div className="w-full border-b dark:border-gray-800 pb-3 mb-3 mt-3">
+                    <div className="w-full mb-3">
                       <Typography>
                         <a href="/https://link.medium.com/dJY0veBUlgb">
                           Get Started
                         </a>
                       </Typography>
-                      <Typography style="mt-3">
-                        <Link href={`/user/` + userData.address}>
-                          My Collection
-                        </Link>
-                      </Typography>
                       {userData.address && (
-                        <Typography
-                          style="mt-3"
-                          onClick={() => disconnectWallet()}
-                        >
-                          Disconnect Wallet
-                        </Typography>
+                        <>
+                          <Typography style="mt-3">
+                            <Link href={`/user/` + userData.address}>
+                              My Collection
+                            </Link>
+                          </Typography>
+                          <Typography
+                            style="mt-3"
+                            onClick={() => disconnectWallet()}
+                          >
+                            Disconnect Wallet
+                          </Typography>
+                        </>
                       )}
                     </div>
                   </>

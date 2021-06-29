@@ -100,7 +100,7 @@ export const UserProvider: React.FC = ({ children }) => {
           setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
         });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 
