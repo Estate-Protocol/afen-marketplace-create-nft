@@ -80,7 +80,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ nfts }) => {
   const { address: walletAddress } = user;
   const { id } = router.query;
 
-  return id ? (
+  return id && walletAddress ? (
     <div>
       <div
         className="w-screen h-80 relative bg-gray-100 dark:bg-gray-900"
