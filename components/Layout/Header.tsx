@@ -44,6 +44,11 @@ export default function Header() {
     };
   }, [mobileMenu]);
 
+  // hanle route change
+  React.useEffect(() => {
+    setMobileMenu(false);
+  }, [router.pathname]);
+
   return (
     <header>
       <div className="flex flex-row px-5 sm:px-20 py-3 md:px-10 lg:px-16 mx-auto overflow-x-hidden border-b-2 bg-white items-center fixed top-0 w-screen z-40">
