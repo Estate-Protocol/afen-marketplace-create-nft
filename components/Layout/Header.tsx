@@ -161,7 +161,10 @@ export default function Header() {
                     )}
                     <div className="w-full mb-3">
                       <Typography>
-                        <a href="/https://link.medium.com/dJY0veBUlgb">
+                        <a
+                          href="https://link.medium.com/dJY0veBUlgb"
+                          target="_blank"
+                        >
                           Get Started
                         </a>
                       </Typography>
