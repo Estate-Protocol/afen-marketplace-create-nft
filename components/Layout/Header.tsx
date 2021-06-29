@@ -14,7 +14,7 @@ import { HiDuplicate } from "react-icons/hi";
 export default function Header() {
   const node = React.useRef();
   const router = useRouter();
-  const { user: userData, mobileWalletConnect } = useUser();
+  const { user: userData, mobileWalletConnect, disconnectWallet } = useUser();
 
   const [mobileMenu, setMobileMenu] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
@@ -72,12 +72,12 @@ export default function Header() {
         <div className="ml-auto md:hidden">
           {mobileMenu ? (
             <GrClose
-              className="text-2xl fill-current text-dark dark:text-white"
+              className="text-xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(false)}
             />
           ) : (
             <GrMenu
-              className="text-2xl fill-current text-dark dark:text-white"
+              className="text-xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(true)}
             />
           )}
@@ -161,6 +161,14 @@ export default function Header() {
                           My Collection
                         </Link>
                       </Typography>
+                      {userData.address && (
+                        <Typography
+                          style="mt-3"
+                          onClick={() => disconnectWallet()}
+                        >
+                          Disconnect Wallet
+                        </Typography>
+                      )}
                     </div>
                   </>
                 </div>
