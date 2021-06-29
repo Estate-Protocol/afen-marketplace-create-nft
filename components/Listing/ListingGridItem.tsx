@@ -55,7 +55,7 @@ export default function HomeListingGridItem({
         </Flex>
 
         <Typography style="font-semibold">
-          {getPrice().amount} {getPrice().currency}
+          {getPrice().amount || 0} {getPrice().currency}
         </Typography>
         {/* <Typography textWidth="w-full" truncate sub size="x-small">
           {item.description}

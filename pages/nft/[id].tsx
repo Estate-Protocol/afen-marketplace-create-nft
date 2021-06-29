@@ -130,7 +130,7 @@ export default function Token({ nft }: NFTPageProps) {
                 Price
               </Typography>
               <Typography style="text-xl md:text-3xl text-right" bold>
-                {getPrice().amount} {getPrice().currency}
+                {getPrice().amount || 0} {getPrice().currency}
               </Typography>
             </div>
           </Flex>
