@@ -84,20 +84,24 @@ export const UserProvider: React.FC = ({ children }) => {
       setSigner(provider.getSigner());
     } else {
       if (!mobile) {
-        // getProvider();
+        getProvider();
       }
     }
   }, [provider]);
 
   const getProvider = () => {
-    // @ts-ignore
-    window.ethereum
-      .request({
-        method: "eth_requestAccounts",
-      })
-      .then(() => {
-        setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
-      });
+    try {
+      // @ts-ignore
+      window.ethereum
+        .request({
+          method: "eth_requestAccounts",
+        })
+        .then(() => {
+          setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const resetApp = () => {
@@ -130,7 +134,7 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const connectWallet = async () => {
     try {
-      getProvider()
+      getProvider();
       // @ts-ignore
       // window.ethereum.enable().then(
       //   setProvider(

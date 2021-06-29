@@ -26,7 +26,7 @@ export default function Body({ children }) {
         color="#f8da56"
         startPosition={0.3}
         stopDelayMs={200}
-        height={5}
+        height={3}
         showOnShallow={true}
       />
       <div className={notification ? "relative h-screen overflow-hidden" : ""}>

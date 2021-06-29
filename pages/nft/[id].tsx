@@ -110,11 +110,8 @@ export default function Token({ nft }: NFTPageProps) {
               <Title style="text-2xl md:text-3xl font-semibold">
                 {nft?.title}
               </Title>
-              <Link href="/profile/artist">
-                <div
-                  className="flex items-end mt-1 cursor-pointer"
-                  onClick={() => push(`/user/${nft?.wallet}`)}
-                >
+              <Link href={`/user/${nft?.wallet}`}>
+                <div className="flex items-end mt-1 cursor-pointer">
                   {/* <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
                     <Image
                       src={nft?.userId}

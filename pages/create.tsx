@@ -26,7 +26,9 @@ export default function Create() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<CreateFormResponse | null>(null);
 
-  setAbi(AFEN_NFT_ABI);
+  React.useEffect(() => {
+    setAbi(AFEN_NFT_ABI);
+  }, []);
 
   const saveNFT = async (data: CreateFormInput): Promise<NFT> => {
     let formData = new FormData();
