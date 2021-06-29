@@ -7,13 +7,21 @@ import useUser from "../../hooks/useUser";
 import Typography from "../IO/Typography";
 import { GrClose, GrMenu } from "react-icons/gr";
 import Flex from "./Flex";
+import { FcCheckmark } from "react-icons/fc";
+import { copyToClipboard } from "../../utils/misc";
+import { HiDuplicate } from "react-icons/hi";
 
 export default function Header() {
   const node = React.useRef();
   const router = useRouter();
-  const [mobileMenu, setMobileMenu] = React.useState(false);
+  const { user: userData, mobileWalletConnect } = useUser();
 
-  const { user: userData } = useUser();
+  const [mobileMenu, setMobileMenu] = React.useState(false);
+  const [copied, setCopied] = React.useState(false);
+
+  const handleMobileConnection = async () => {
+    mobileWalletConnect.walletConnectInit();
+  };
 
   const handleClickOutside = (e) => {
     // @ts-ignore
@@ -48,12 +56,12 @@ export default function Header() {
           </div>
         </Link>
         <div className="hidden md:inline-flex items-center ml-auto">
-          <Typography bold style="mr-8">
+          <Typography style="mr-8">
             <a href="/https://link.medium.com/dJY0veBUlgb">Get Started</a>
           </Typography>
 
-          <Typography bold style="mr-8">
-            <Link href={`/user/${userData.address}`}>NFTs</Link>
+          <Typography style="mr-8">
+            <Link href={`/user/${userData.address}`}>My Collection</Link>
           </Typography>
 
           <Button type="primary" onClick={() => router.push("/create")}>
@@ -83,37 +91,52 @@ export default function Header() {
                 style="w-full bg-white dark:bg-rich-black rounded-b-3xl shadow-2xl px-4 z-40 md:px-10 lg:px-16 pt-4 pb-6"
               >
                 <div className="w-full">
-                  {userData.address && (
-                    <>
-                      {userData.address && (
-                        <Flex center style="mb-3 overflow-hidden w-full">
-                          <div className="mr-3">
-                            <div className="relative h-12 w-12 rounded-full bg-gray-300">
-                              {userData.user?.avatar && (
-                                <Image
-                                  src={userData.user?.avatar}
-                                  layout="fill"
-                                  objectFit="cover"
-                                  className="rounded-full"
-                                />
-                              )}
-                            </div>
+                  <>
+                    {userData.address && (
+                      <Flex center style="mb-3 overflow-hidden w-full">
+                        <div className="mr-3">
+                          <div className="relative h-12 w-12 rounded-full bg-gray-300">
+                            {userData.user?.avatar && (
+                              <Image
+                                src={userData.user?.avatar}
+                                layout="fill"
+                                objectFit="cover"
+                                className="rounded-full"
+                              />
+                            )}
                           </div>
-                          <div>
-                            <Typography size="x-small" sub style="-mb-1">
-                              Wallet
+                        </div>
+                        <div>
+                          <Typography size="x-small" sub style="-mb-1">
+                            Wallet
+                          </Typography>
+                          <div className="inline-flex">
+                            <Typography
+                              textWidth="w-60"
+                              bold
+                              truncate
+                              style="lowercase"
+                              onClick={() =>
+                                router.push(`/user/${userData.address}`)
+                              }
+                            >
+                              {userData.address}
                             </Typography>
-                            <div className="inline-flex">
-                              <Typography
-                                textWidth="w-4/5"
-                                bold
-                                truncate
-                                style="lowercase"
-                              >
-                                {userData.address}
-                              </Typography>
-                            </div>
-                            {/* <div className="">
+                            {copied ? (
+                              <FcCheckmark className="ml-2 h-5 w-5" />
+                            ) : (
+                              <HiDuplicate
+                                onClick={() =>
+                                  copyToClipboard(userData.address, setCopied)
+                                }
+                                className={`${
+                                  open ? "" : "text-opacity-70"
+                                } ml-2 h-5 w-5 group-hover:text-opacity-80 transition ease-in-out duration-150 cursor-pointer`}
+                                aria-hidden="true"
+                              />
+                            )}
+                          </div>
+                          {/* <div className="">
                             <Typography size="x-small" sub style="mt-1 -mb-1">
                               Balance
                             </Typography>
@@ -124,32 +147,49 @@ export default function Header() {
                               </span>
                             </Typography>
                           </div> */}
-                          </div>
-                        </Flex>
-                      )}
-                      <div className="w-full border-b dark:border-gray-800 pb-3 mb-3 mt-3">
-                        <Typography>
-                          <a href="/https://link.medium.com/dJY0veBUlgb">
-                            Get Started
-                          </a>
-                        </Typography>
-                        <Typography style="mt-3">
-                          <Link href={`/nft/${userData.address}`}>NFTs</Link>
-                        </Typography>
-                      </div>
+                        </div>
+                      </Flex>
+                    )}
+                    <div className="w-full border-b dark:border-gray-800 pb-3 mb-3 mt-3">
+                      <Typography>
+                        <a href="/https://link.medium.com/dJY0veBUlgb">
+                          Get Started
+                        </a>
+                      </Typography>
+                      <Typography style="mt-3">
+                        <Link href={`/nft/${userData.address}`}>
+                          My Collection
+                        </Link>
+                      </Typography>
+                    </div>
+                  </>
+                </div>
+
+                <Button
+                  type="primary"
+                  block
+                  icon
+                  style="mt-2 w-full"
+                  onClick={() =>
+                    userData.address
+                      ? router.push("/create")
+                      : handleMobileConnection()
+                  }
+                >
+                  {userData.address ? (
+                    "Create"
+                  ) : (
+                    <>
+                      <Image
+                        src="/metamask.svg"
+                        height="20"
+                        width="20"
+                        layout="fixed"
+                      />
+                      <span className="ml-2">Connect Wallet</span>
                     </>
                   )}
-                </div>
-                {userData.address && (
-                  <Button
-                    type="primary"
-                    block
-                    style="mt-2 w-full"
-                    // onClick={handleMobileConnection}
-                  >
-                    Create
-                  </Button>
-                )}
+                </Button>
               </Flex>
             </div>
           </div>
