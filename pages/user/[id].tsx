@@ -26,7 +26,7 @@ interface UserProfilePageProps {
 export const getStaticPaths: GetStaticPaths = async () => {
   const response = await api.post("/nft/list", {
     pageNo: 1,
-    numPerPage: 5000,
+    numPerPage: 50,
     filter: {
       isAuction: false,
       price: "",
@@ -35,8 +35,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const NFTs: NFT[] = response?.data.list || [];
 
-  const paths = NFTs.flatMap(({ wallet }) =>
-    wallet
+  const paths = NFTs.flatMap(({ wallet, path }) =>
+    wallet && path
       ? {
           params: {
             id: wallet,
@@ -55,7 +55,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const { id } = params;
   const response = await api.post("nft/list", {
     pageNo: 1,
-    numPerPage: 5000,
+    numPerPage: 50,
     filter: {
       isAuction: false,
       price: "",
@@ -80,7 +80,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ nfts }) => {
   const { address: walletAddress } = user;
   const { id } = router.query;
 
-  return walletAddress && id ? (
+  return id ? (
     <div>
       <div
         className="w-screen h-80 relative bg-gray-100 dark:bg-gray-900"
