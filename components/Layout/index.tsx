@@ -28,6 +28,7 @@ export default function Body({ children }) {
         stopDelayMs={200}
         height={3}
         showOnShallow={true}
+        options={{ showSpinner: false }}
       />
       <div className={notification ? "relative h-screen overflow-hidden" : ""}>
         <Head>

@@ -57,11 +57,13 @@ export default function Header() {
         </Link>
         <div className="hidden md:inline-flex items-center ml-auto">
           <Typography style="mr-8">
-            <a href="/https://link.medium.com/dJY0veBUlgb">Get Started</a>
+            <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
+              Get Started
+            </a>
           </Typography>
 
           <Typography style="mr-8">
-            <Link href={`/user/${userData.address}`}>My Collection</Link>
+            <Link href={`/user/` + userData.address}>My Collection</Link>
           </Typography>
 
           <Button type="primary" onClick={() => router.push("/create")}>
@@ -157,7 +159,7 @@ export default function Header() {
                         </a>
                       </Typography>
                       <Typography style="mt-3">
-                        <Link href={`/user/${userData.address}`}>
+                        <Link href={`/nft/` + userData.address}>
                           My Collection
                         </Link>
                       </Typography>

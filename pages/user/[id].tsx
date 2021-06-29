@@ -16,6 +16,7 @@ import { api } from "../../utils/axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import UserNFTs from "../../components/User/UserNFTs";
 import { NFT } from "../../types/NFT";
+import Button from "../../components/IO/Button";
 
 interface UserProfilePageProps {
   data: User;
@@ -79,17 +80,17 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ nfts }) => {
   const { address: walletAddress } = user;
   const { id } = router.query;
 
-  return walletAddress ? (
+  return walletAddress && id ? (
     <div>
       <div
         className="w-screen h-80 relative bg-gray-100 dark:bg-gray-900"
         style={{ minHeight: "300px", height: "380px" }}
       ></div>
       <div
-        className="rounded-full h-40 w-40 shadow-md p-2 ring-4 ring-afen-yellow  flex items-center justify-center relative overflow-hidden -mt-20 mb-10 mx-auto bg-gray-100"
+        className="rounded-full h-40 w-40 shadow-md p-2 ring-4 ring-afen-yellow  flex items-center justify-center relative overflow-hidden -mt-20 mb-8 mx-auto bg-gray-100"
         style={{ width: "160px", height: "160px", marginTop: "-80px" }}
       ></div>
-      <div className="flex justify-center mx-auto mb-10">
+      <div className="flex justify-center mx-auto">
         <Typography size="large" truncate textWidth="w-60" bold>
           {walletAddress}
         </Typography>
