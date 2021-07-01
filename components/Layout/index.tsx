@@ -3,22 +3,17 @@ import Head from "next/head";
 import Footer from "./Footer";
 import Header from "./Header";
 import useNotifier from "../../hooks/useNotifier";
-import Title from "../IO/Title";
-import Typography from "../IO/Typography";
-import { IoCloseSharp } from "react-icons/io5";
-import Flex from "./Flex";
 import ProgressBar from "nextjs-progressbar";
+import Notification from "../Notification/NotificationDialog";
+import useAuth from "../../hooks/useAuth";
+import { LoginDialog } from "../User/LoginDialog";
+import classnames from "classnames";
 
 export default function Body({ children }) {
   const { data: notification, close: closeNotification } = useNotifier();
+  const { loginDialog, onCloseLoginDialog } = useAuth();
 
-  const notificationColor = () => {
-    if (notification.status === "error") {
-      return "text-red-500";
-    } else if (notification.status === "success") {
-      return "text-green-500";
-    }
-  };
+  const dialogOpen = notification || loginDialog;
 
   return (
     <>
@@ -30,7 +25,11 @@ export default function Body({ children }) {
         showOnShallow={true}
         options={{ showSpinner: false }}
       />
-      <div className={notification ? "relative h-screen overflow-hidden" : ""}>
+      <div
+        className={classnames({
+          "relative h-screen overflow-hidden": dialogOpen,
+        })}
+      >
         <Head>
           <title>AFEN Art Marketplace</title>
           <meta
@@ -55,23 +54,12 @@ export default function Body({ children }) {
           <Header />
           {/* Notification */}
           {notification && (
-            <div className="absolute left-0 top-0 h-screen w-full bg-black bg-opacity-60 z-50 flex flex-col justify-center overscroll-none">
-              <div className="w-4/5 md:w-96 bg-white dark:bg-afen-blue mx-auto rounded-2xl p-8 shadow-lg">
-                <Flex spaceBetween center style="mb-5">
-                  <Title style={`${notificationColor()}`}>
-                    {notification?.title}
-                  </Title>
-                  <IoCloseSharp
-                    className="text-3xl text-gray-400 cursor-pointer"
-                    onClick={() => closeNotification()}
-                  />
-                </Flex>
-                <Typography sub bold style="mb-2">
-                  {notification.text}
-                </Typography>
-              </div>
-            </div>
+            <Notification data={notification} close={closeNotification} />
           )}
+
+          {/* Login Dialog */}
+          {loginDialog && <LoginDialog close={onCloseLoginDialog} />}
+
           <div>{children}</div>
           <Footer />
         </div>

@@ -65,7 +65,7 @@ export default function Button({
         break;
       case ButtonType.SECONDARY:
         buttonStyle +=
-          "px-5 py-2 rounded-md bg-afen-yellow bg-opacity-40 dark:text-afen-yellow";
+          "px-5 py-2 rounded-full border-2 border-black";
         break;
       case ButtonType.OUTLINED:
         buttonStyle += "rounded border-2 border-almond bg-none";

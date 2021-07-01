@@ -45,3 +45,17 @@ export const isMobile = () => {
   const device = getDevice();
   return device === "ios" || device === "android";
 };
+
+export const handleClickOutside = (
+  e: MouseEvent,
+  node: React.MutableRefObject<undefined>,
+  action: () => void
+) => {
+  // @ts-ignore
+  if (node.current.contains(e.target)) {
+    return;
+  }
+
+  // on outside click
+  action();
+};

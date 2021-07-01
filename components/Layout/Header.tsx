@@ -23,7 +23,7 @@ export default function Header() {
     mobileWalletConnect.walletConnectInit();
   };
 
-  const handleClickOutside = (e) => {
+  const handleClickOutside = (e: { target: any }) => {
     // @ts-ignore
     if (node.current.contains(e.target)) {
       return;
@@ -61,17 +61,21 @@ export default function Header() {
           </div>
         </Link>
         <div className="hidden md:inline-flex items-center ml-auto">
-          <Typography style="mr-8">
+          <Typography style="mr-8" sub>
             <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
               Get Started
             </a>
           </Typography>
 
           {userData.address && (
-            <Typography style="mr-8">
+            <Typography style="mr-8" sub>
               <Link href={`/user/` + userData.address}>My Collection</Link>
             </Typography>
           )}
+
+          <Typography style="mr-8" sub>
+            <Link href="/">Login</Link>
+          </Typography>
 
           <Button type="primary" onClick={() => router.push("/create")}>
             Create NFT

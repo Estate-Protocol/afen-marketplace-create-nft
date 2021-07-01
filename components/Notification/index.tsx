@@ -1,2 +1,2 @@
-export { default } from "./Notification";
-export * from "./Notification";
+export { default } from "./NotificationProvider";
+export * from "./NotificationProvider";

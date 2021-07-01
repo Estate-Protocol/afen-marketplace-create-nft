@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         "afen-yellow": "#f8da56",
+        "afen-yellow-secondary": "#FBE689",
       },
     },
   },
