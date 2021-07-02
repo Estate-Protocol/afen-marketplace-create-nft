@@ -43,7 +43,10 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   const handleNameInput = (name: string) => {
     setName(name);
     setErrors({
-      name: validateName(name) ? "Please ensure this is your name" : undefined,
+      name:
+        name.length && validateName(name)
+          ? "Please ensure this is your name"
+          : undefined,
     });
   };
 
@@ -51,9 +54,10 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
     setEmail(email);
     setErrors({
       ...errors,
-      email: validateEmail(email)
-        ? "Please input a valid email address"
-        : undefined,
+      email:
+        email.length && validateEmail(email)
+          ? "Please input a valid email address"
+          : undefined,
     });
   };
 
@@ -61,9 +65,10 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
     setPassword(password);
     setErrors({
       ...errors,
-      password: validatePassword(password)
-        ? "Please input a valid password"
-        : undefined,
+      password:
+        password.length && validatePassword(password)
+          ? "Please input a valid password"
+          : undefined,
     });
   };
 

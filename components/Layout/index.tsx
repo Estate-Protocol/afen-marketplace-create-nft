@@ -23,7 +23,6 @@ export default function Body({ children }) {
 
   const dialogOpen = notification || loginDialog || registerDialog;
 
-
   const toggleAuthDialogs = () => {
     toggleLoginDialog();
     toggleRegisterDialog();
@@ -41,7 +40,7 @@ export default function Body({ children }) {
       />
       <div
         className={classnames({
-          "relative h-screen overflow-hidden": dialogOpen,
+          "relative h-screen overflow-hidden overscroll-contain": dialogOpen,
         })}
       >
         <Head>
@@ -63,6 +62,11 @@ export default function Body({ children }) {
             as="font"
             crossOrigin=""
           />
+          <meta
+            content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
+            name="viewport"
+          />
+          <meta name="viewport" content="width=device-width" />
         </Head>
         <div>
           <Header />

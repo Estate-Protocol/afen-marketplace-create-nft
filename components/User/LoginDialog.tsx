@@ -37,9 +37,10 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
     setEmail(email);
     setErrors({
       ...errors,
-      email: validateEmail(email)
-        ? "Please input a valid email address"
-        : undefined,
+      email:
+        email.length && validateEmail(email)
+          ? "Please input a valid email address"
+          : undefined,
     });
   };
 
@@ -47,7 +48,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
     setPassword(password);
     setErrors({
       ...errors,
-      password: validatePassword(password)
+      password: password.length && validatePassword(password)
         ? "Please input a valid password"
         : undefined,
     });
