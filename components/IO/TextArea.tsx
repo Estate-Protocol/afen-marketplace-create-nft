@@ -13,6 +13,8 @@ interface TextAreaProps {
   required?: boolean;
   min?: number;
   max?: number;
+  error?: string;
+  persistDescription?: boolean;
   prepend?: ReactNode | string;
   onChange?: (text: any) => void;
 }
@@ -26,7 +28,9 @@ export default function TextArea({
   description,
   required,
   disabled,
+  error,
   prepend,
+  persistDescription,
   onChange,
 }: TextAreaProps) {
   return (
@@ -53,9 +57,9 @@ export default function TextArea({
         />
         <div className="ml-2">{prepend}</div>
       </div>
-      {description && (
+      {(error || description) && (
         <Typography sub size="x-small" style="mt-2">
-          {description}
+          {persistDescription ? description : error || description}
         </Typography>
       )}
     </div>

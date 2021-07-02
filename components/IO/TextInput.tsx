@@ -1,6 +1,8 @@
 import React, { ReactNode } from "react";
 import Typography from "./Typography";
 import { slugifyText } from "../../utils/misc";
+import classnames from "classnames";
+import CheckBox from "./CheckBox";
 
 interface TextInput {
   label: string;
@@ -14,8 +16,10 @@ interface TextInput {
   min?: number;
   max?: number;
   error?: string;
+  success?: string | boolean;
   append?: ReactNode | string;
   prepend?: ReactNode | string;
+  persistDescription?: boolean;
   onChange?: (text: any) => void;
 }
 
@@ -33,27 +37,33 @@ export default function TextInput({
   append,
   prepend,
   error,
+  success,
+  persistDescription,
   onChange,
 }: TextInput) {
-  const borderColor = [error ? "border-red-500" : "dark:border-gray-500"];
+  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <div className="mb-5 w-full">
       <label htmlFor={slugifyText(label)}>
-        <Typography bold size="small">
+        <Typography sub bold size="small">
           {label}
           {required && <span className="text-black dark:text-white"> *</span>}
         </Typography>
       </label>
       <div
-        className={`inline-flex items-center w-full mt-2 border-2 ${borderColor} rounded-full px-4 py-2 focus:border-blue-500`}
+        className={classnames(
+          "inline-flex items-center w-full mt-2 border-2  rounded-full px-4 py-2 focus:border-blue-500 dark:border-gray-500",
+          { "border-red-500": error },
+          { "border-green-500": success }
+        )}
       >
         {icon}
         {prepend && <div className="mr-2">{prepend}</div>}
         <input
           name={slugifyText(label)}
           value={value}
-          type={type}
+          type={showPassword ? "text" : type}
           pattern={type === "number" && "^[0-9]"}
           disabled={disabled}
           placeholder={placeholder}
@@ -69,8 +79,17 @@ export default function TextInput({
       </div>
       {(error || description) && (
         <Typography sub size="x-small" style="mt-2">
-          {error || description}
+          {persistDescription ? description : error || description}
         </Typography>
+      )}
+      {type === "password" && (
+        <div className="mt-1.5">
+          <CheckBox
+            label="Show Password"
+            checked={showPassword}
+            onChange={() => setShowPassword(!showPassword)}
+          ></CheckBox>
+        </div>
       )}
     </div>
   );

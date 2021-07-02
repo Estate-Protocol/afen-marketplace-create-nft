@@ -1,4 +1,5 @@
 import React, { FormEvent } from "react";
+import { validateEmail, validatePassword } from "../../utils/validation";
 import { LoginInput } from "../Auth";
 import { Dialog } from "../Dialog/Dialog";
 import Button from "../IO/Button";
@@ -22,6 +23,8 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [errors, setErrors] =
+    React.useState<{ [key: string]: string | null }>(null);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -29,6 +32,28 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
     await onLogin({ email, password });
     setLoading(false);
   };
+
+  const handleEmailInput = (email: string) => {
+    setEmail(email);
+    setErrors({
+      ...errors,
+      email: validateEmail(email)
+        ? "Please input a valid email address"
+        : undefined,
+    });
+  };
+
+  const handlePasswordInput = (password: string) => {
+    setPassword(password);
+    setErrors({
+      ...errors,
+      password: validatePassword(password)
+        ? "Please input a valid password"
+        : undefined,
+    });
+  };
+
+  const disabled = validateEmail(email) || validatePassword(password);
 
   return (
     <Dialog onCloseDialog={toggle} isOpen={isOpen}>
@@ -40,7 +65,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
             type="plain"
             size="small"
             style="underline"
-            onClick={() => onOpenRegisterDialog()}
+            onClick={onOpenRegisterDialog}
           >
             Register
           </Button>
@@ -49,24 +74,31 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
           <div className="mt-4">
             <TextInput
               label="Email"
-              placeholder="john@example.com"
               type="email"
+              required
               value={email}
-              onChange={setEmail}
+              error={errors?.email}
+              onChange={handleEmailInput}
             />
             <TextInput
               label="Password"
-              placeholder="john@example.com"
               type="password"
+              required
               value={password}
-              onChange={setPassword}
+              onChange={handlePasswordInput}
             />
 
-            <Button block loading={loading} style="my-3" inputType="submit">
+            <Button
+              block
+              loading={loading}
+              style="my-3"
+              inputType="submit"
+              disabled={disabled}
+            >
               Login
             </Button>
             <div className="text-center">
-              <Typography size="small" sub style="">
+              <Typography size="small" sub>
                 Forgot your password?
               </Typography>
             </div>

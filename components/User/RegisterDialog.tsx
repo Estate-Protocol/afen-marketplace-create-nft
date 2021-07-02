@@ -5,7 +5,11 @@ import TextInput from "../IO/TextInput";
 import Title from "../IO/Title";
 import Typography from "../IO/Typography";
 import { User } from "./types/User";
-import Link from "next/link";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "../../utils/validation";
 
 interface RegisterDialogProps {
   isOpen?: boolean;
@@ -26,6 +30,8 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [errors, setErrors] =
+    React.useState<{ [key: string]: string | null }>(null);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -33,6 +39,36 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
     await onRegister({ name, email, password });
     setLoading(false);
   };
+
+  const handleNameInput = (name: string) => {
+    setName(name);
+    setErrors({
+      name: validateName(name) ? "Please ensure this is your name" : undefined,
+    });
+  };
+
+  const handleEmailInput = (email: string) => {
+    setEmail(email);
+    setErrors({
+      ...errors,
+      email: validateEmail(email)
+        ? "Please input a valid email address"
+        : undefined,
+    });
+  };
+
+  const handlePasswordInput = (password: string) => {
+    setPassword(password);
+    setErrors({
+      ...errors,
+      password: validatePassword(password)
+        ? "Please input a valid password"
+        : undefined,
+    });
+  };
+
+  const disabled =
+    validateName(name) || validateEmail(email) || validatePassword(password);
 
   return (
     <Dialog isOpen={isOpen} onCloseDialog={toggle}>
@@ -53,26 +89,42 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
           <div className="mt-4">
             <TextInput
               label="Name"
-              placeholder="john@example.com"
               type="text"
+              required
               value={name}
-              onChange={setName}
+              success={!errors?.name && name.length > 0}
+              error={errors?.name}
+              onChange={handleNameInput}
             />
             <TextInput
               label="Email"
-              placeholder="john@example.com"
               type="email"
+              required
+              success={!errors?.email && email.length > 0}
               value={email}
-              onChange={setEmail}
+              error={errors?.email}
+              onChange={handleEmailInput}
             />
             <TextInput
               label="Password"
-              placeholder="john@example.com"
               type="password"
+              required
               value={password}
-              onChange={setPassword}
+              description={
+                "Minimum eight characters, at least one uppercase letter, one lowercase letter and one number"
+              }
+              success={!errors?.password && password.length > 0}
+              error={errors?.password}
+              persistDescription={true}
+              onChange={handlePasswordInput}
             />
-            <Button block loading={loading} style="mt-6" inputType="submit">
+            <Button
+              block
+              loading={loading}
+              style="mt-6"
+              inputType="submit"
+              disabled={disabled}
+            >
               Register
             </Button>
           </div>
