@@ -4,15 +4,20 @@ import { handleClickOutside } from "../../utils/misc";
 
 export interface DialogProps extends BaseComponent {
   width?: string;
+  isOpen?: boolean;
   onCloseDialog?: () => void;
 }
 
-export const Dialog: React.FC<DialogProps> = ({ children, onCloseDialog }) => {
+export const Dialog: React.FC<DialogProps> = ({
+  children,
+  isOpen,
+  onCloseDialog,
+}) => {
   const node = React.useRef();
 
   const handleClickOutside = (e: { target: any }) => {
     // @ts-ignore
-    if (node.current.contains(e.target)) {
+    if (node?.current?.contains(e.target)) {
       return;
     }
 
@@ -21,12 +26,16 @@ export const Dialog: React.FC<DialogProps> = ({ children, onCloseDialog }) => {
   };
 
   React.useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
 
     return () => {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, [isOpen]);
 
   return (
     <div

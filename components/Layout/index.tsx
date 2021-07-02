@@ -8,12 +8,26 @@ import Notification from "../Notification/NotificationDialog";
 import useAuth from "../../hooks/useAuth";
 import { LoginDialog } from "../User/LoginDialog";
 import classnames from "classnames";
+import { RegisterDialog } from "../User/RegisterDialog";
 
 export default function Body({ children }) {
   const { data: notification, close: closeNotification } = useNotifier();
-  const { loginDialog, onCloseLoginDialog } = useAuth();
+  const {
+    loginDialog,
+    registerDialog,
+    toggleLoginDialog,
+    toggleRegisterDialog,
+    register,
+    login,
+  } = useAuth();
 
-  const dialogOpen = notification || loginDialog;
+  const dialogOpen = notification || loginDialog || registerDialog;
+
+
+  const toggleAuthDialogs = () => {
+    toggleLoginDialog();
+    toggleRegisterDialog();
+  };
 
   return (
     <>
@@ -58,7 +72,24 @@ export default function Body({ children }) {
           )}
 
           {/* Login Dialog */}
-          {loginDialog && <LoginDialog close={onCloseLoginDialog} />}
+          {loginDialog && (
+            <LoginDialog
+              isOpen={loginDialog}
+              toggle={toggleLoginDialog}
+              onOpenRegisterDialog={toggleAuthDialogs}
+              onLogin={login}
+            />
+          )}
+
+          {/* Register Dialog */}
+          {registerDialog && (
+            <RegisterDialog
+              isOpen={registerDialog}
+              toggle={toggleRegisterDialog}
+              onOpenLoginDialog={toggleAuthDialogs}
+              onRegister={register}
+            />
+          )}
 
           <div>{children}</div>
           <Footer />

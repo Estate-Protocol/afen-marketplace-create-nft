@@ -10,11 +10,14 @@ import Flex from "./Flex";
 import { FcCheckmark } from "react-icons/fc";
 import { copyToClipboard } from "../../utils/misc";
 import { HiDuplicate } from "react-icons/hi";
+import useAuth from "../../hooks/useAuth";
 
 export default function Header() {
   const node = React.useRef();
   const router = useRouter();
   const { user: userData, mobileWalletConnect, disconnectWallet } = useUser();
+
+  const { toggleLoginDialog } = useAuth();
 
   const [mobileMenu, setMobileMenu] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
@@ -61,21 +64,25 @@ export default function Header() {
           </div>
         </Link>
         <div className="hidden md:inline-flex items-center ml-auto">
-          <Typography style="mr-8" sub>
+          <Typography style="mr-8" sub bold>
             <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
               Get Started
             </a>
           </Typography>
 
           {userData.address && (
-            <Typography style="mr-8" sub>
+            <Typography style="mr-8" sub bold>
               <Link href={`/user/` + userData.address}>My Collection</Link>
             </Typography>
           )}
 
-          <Typography style="mr-8" sub>
-            <Link href="/">Login</Link>
-          </Typography>
+          <Button
+            type="plain"
+            onClick={() => toggleLoginDialog(true)}
+            style="mr-8"
+          >
+            <Typography sub>Login</Typography>
+          </Button>
 
           <Button type="primary" onClick={() => router.push("/create")}>
             Create NFT

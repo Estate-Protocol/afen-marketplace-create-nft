@@ -9,22 +9,29 @@ export interface LoginInput extends Pick<User, "email" | "password"> {}
 export interface IAuthContext {
   isAuthenticated: boolean;
   loginDialog: boolean;
-  onCloseLoginDialog: () => void;
+  registerDialog: boolean;
+  toggleLoginDialog: (value?: boolean) => void;
+  toggleRegisterDialog: (value?: boolean) => void;
   login: (data: LoginInput) => Promise<void>;
+  register: (data: User) => Promise<void>;
   logout: () => void;
 }
 
 export const AuthContext = React.createContext<IAuthContext>({
   isAuthenticated: false,
   loginDialog: false,
-  onCloseLoginDialog: undefined,
+  registerDialog: false,
+  toggleLoginDialog: undefined,
+  toggleRegisterDialog: undefined,
   login: undefined,
+  register: undefined,
   logout: undefined,
 });
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loginDialog, setLoginDialog] = useState(false);
+  const [loginDialog, setLoginDialog] = useState<boolean>(false);
+  const [registerDialog, setRegisterDialog] = useState<boolean>(false);
 
   const { route, push: routeTo } = useRouter();
 
@@ -33,6 +40,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (protectedRoutes.includes(route)) {
       if (!isAuthenticated) {
         // display login dialog
+        // TODO: improve by preventing next route rather than routing to home
         routeTo("/");
         setLoginDialog(true);
       }
@@ -41,7 +49,11 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const login = (data: LoginInput): any => {
     // login user
-    setLoginDialog(false);
+    // setLoginDialog(false);
+  };
+
+  const register = (data: User): any => {
+    // register user
   };
 
   const logout = () => {
@@ -53,8 +65,12 @@ export const AuthProvider: React.FC = ({ children }) => {
       value={{
         isAuthenticated,
         loginDialog,
-        onCloseLoginDialog: () => setLoginDialog(false),
+        registerDialog,
+        toggleLoginDialog: (value) => setLoginDialog(value || !loginDialog),
+        toggleRegisterDialog: (value) =>
+          setRegisterDialog(value || !registerDialog),
         login,
+        register,
         logout,
       }}
     >
