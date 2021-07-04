@@ -6,9 +6,11 @@ import Button from "../IO/Button";
 import TextInput from "../IO/TextInput";
 import Title from "../IO/Title";
 import Typography from "../IO/Typography";
+import { Message, MessageProps } from "../Message/Message";
 
 interface LoginDialogProps {
   isOpen?: boolean;
+  message?: MessageProps;
   toggle: () => void;
   onLogin: (data: LoginInput) => Promise<void>;
   onOpenRegisterDialog: () => void;
@@ -16,6 +18,7 @@ interface LoginDialogProps {
 
 export const LoginDialog: React.FC<LoginDialogProps> = ({
   isOpen,
+  message,
   toggle,
   onLogin,
   onOpenRegisterDialog,
@@ -48,9 +51,10 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
     setPassword(password);
     setErrors({
       ...errors,
-      password: password.length && validatePassword(password)
-        ? "Please input a valid password"
-        : undefined,
+      password:
+        password.length && validatePassword(password)
+          ? "Please input a valid password"
+          : undefined,
     });
   };
 
@@ -72,6 +76,13 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
           </Button>
         </Typography>
         <form onSubmit={handleSubmit}>
+          {message?.data.text && (
+            <Message
+              data={message.data}
+              dismissable={message.dismissable}
+              style="mt-4"
+            />
+          )}
           <div className="mt-4">
             <TextInput
               label="Email"

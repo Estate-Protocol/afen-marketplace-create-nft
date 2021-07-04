@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import slugify from "slugify";
 
 export const copyToClipboard = async (
@@ -58,4 +59,14 @@ export const handleClickOutside = (
 
   // on outside click
   action();
+};
+
+export const handleAxiosRequestError = (err: AxiosError) => {
+  if (err.isAxiosError) {
+    // Access to config, request, and response
+    return err;
+  } else {
+    // Just a stock error, perhaps use notification
+    console.log(err);
+  }
 };

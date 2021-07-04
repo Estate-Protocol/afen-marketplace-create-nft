@@ -10,18 +10,27 @@ import {
   validateName,
   validatePassword,
 } from "../../utils/validation";
+import { Message, MessageProps } from "../Message/Message";
+import Image from "next/image";
+import useUser from "../../hooks/useUser";
+import { GrCheckmark } from "react-icons/gr";
+import { MdContentCopy } from "react-icons/md";
+import { copyToClipboard } from "../../utils/misc";
+import classNames from "classnames";
 
 interface RegisterDialogProps {
   isOpen?: boolean;
+  message?: MessageProps;
   toggle: () => void;
   onRegister: (
-    data: Pick<User, "name" | "email" | "password">
+    data: Pick<User, "name" | "email" | "password" | "wallet">
   ) => Promise<void>;
   onOpenLoginDialog: () => void;
 }
 
 export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   isOpen,
+  message,
   toggle,
   onRegister,
   onOpenLoginDialog,
@@ -29,14 +38,24 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [wallet, setWallet] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] =
     React.useState<{ [key: string]: string | null }>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  const { user, isConnectingWallet, connectWallet } = useUser();
+
+  React.useEffect(() => {
+    if (user?.address) {
+      setWallet(user?.address);
+    }
+  }, [user?.address]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    await onRegister({ name, email, password });
+    await onRegister({ name, email, password, wallet });
     setLoading(false);
   };
 
@@ -73,7 +92,10 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   };
 
   const disabled =
-    validateName(name) || validateEmail(email) || validatePassword(password);
+    validateName(name) ||
+    validateEmail(email) ||
+    validatePassword(password) ||
+    !wallet;
 
   return (
     <Dialog isOpen={isOpen} onCloseDialog={toggle}>
@@ -91,7 +113,50 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
           </Button>
         </Typography>
         <form onSubmit={handleSubmit}>
+          {message?.data.text && (
+            <Message
+              data={message.data}
+              dismissable={message.dismissable}
+              style="mt-4"
+            />
+          )}
           <div className="mt-4">
+            <Button
+              type="secondary"
+              block
+              icon
+              style={classNames("mb-4", { "border-green-500": user?.address })}
+              inputType="button"
+              loading={isConnectingWallet}
+              disabled={isConnectingWallet}
+              onClick={user?.address ? undefined : connectWallet}
+            >
+              {user.address ? (
+                <>
+                  <Typography style="mr-2">Wallet Connected</Typography>
+                  {copied ? (
+                    <GrCheckmark className="text-xl" />
+                  ) : (
+                    <MdContentCopy
+                      className="text-xl"
+                      onClickCapture={() =>
+                        copyToClipboard(user.address, setCopied)
+                      }
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <Typography style="mr-2">Connect Wallet</Typography>
+                  <Image
+                    src="/metamask.svg"
+                    width={24}
+                    height={24}
+                    layout="fixed"
+                  />
+                </>
+              )}
+            </Button>
             <TextInput
               label="Name"
               type="text"
@@ -126,7 +191,7 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
             <Button
               block
               loading={loading}
-              style="mt-6"
+              style="mt-12"
               inputType="submit"
               disabled={disabled}
             >

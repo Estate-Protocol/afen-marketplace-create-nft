@@ -24,6 +24,7 @@ export type IUserContext = {
   getUser: (wallet: string) => Promise<UserData>;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  isConnectingWallet: boolean;
   mobileWalletConnect: WalletConnectActions | null;
   assets: IAssetData[];
   loading: boolean;
@@ -36,6 +37,7 @@ export const UserContext = React.createContext<IUserContext>({
   getUser: () => undefined,
   connectWallet: () => undefined,
   disconnectWallet: () => undefined,
+  isConnectingWallet: false,
   mobileWalletConnect: null,
   assets: [],
   loading: false,
@@ -57,6 +59,7 @@ export const UserProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   const [chainId, setChainId] = useState<number | null>(null);
+  const [isConnectingWallet, setConnectingWallet] = useState(false);
   const [walletConnector, setWalletConnector] = useState<WalletConnect | null>(
     null
   );
@@ -134,14 +137,18 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const connectWallet = async () => {
     try {
-      getProvider();
       // @ts-ignore
-      // window.ethereum.enable().then(
-      //   setProvider(
-      //     // @ts-ignore
-      //     new ethers.providers.Web3Provider(window.ethereum)
-      //   )
-      // );
+      if (!window.ethereum.isMetaMask) {
+        throw new Error("Install MetaMask");
+      }
+
+      // @ts-ignore
+      window.ethereum.enable().then(
+        setProvider(
+          // @ts-ignore
+          new ethers.providers.Web3Provider(window.ethereum)
+        )
+      );
 
       setSigner(provider?.getSigner());
 
@@ -196,17 +203,17 @@ export const UserProvider: React.FC = ({ children }) => {
     setAccounts(accounts);
     setAddress(address);
 
-    if (address) {
-      const user = await getUser(address);
-      setUser(user);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          address,
-          user,
-        })
-      );
-    }
+    // if (address) {
+    //   const user = await getUser(address);
+    //   setUser(user);
+    //   localStorage.setItem(
+    //     "user",
+    //     JSON.stringify({
+    //       address,
+    //       user,
+    //     })
+    //   );
+    // }
 
     // return await getBalance();
   };
@@ -240,6 +247,7 @@ export const UserProvider: React.FC = ({ children }) => {
         getUser,
         connectWallet,
         disconnectWallet,
+        isConnectingWallet,
         mobileWalletConnect: walletConnect,
         assets,
         loading,

@@ -13,4 +13,5 @@ export interface User {
   balance: number;
   createdAt: string;
   updatedAt: string;
+  token?: string;
 }

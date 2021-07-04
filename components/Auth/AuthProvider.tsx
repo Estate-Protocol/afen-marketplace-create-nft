@@ -1,6 +1,11 @@
+import { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
+import useNotifier from "../../hooks/useNotifier";
+import useUser from "../../hooks/useUser";
 import { User } from "../../types/User";
+import { MessageProps } from "../Message/Message";
+import { login, logout, register } from "./apis/auth";
 
 const protectedRoutes = ["/create", "/user"];
 
@@ -10,6 +15,7 @@ export interface IAuthContext {
   isAuthenticated: boolean;
   loginDialog: boolean;
   registerDialog: boolean;
+  message: MessageProps | null;
   toggleLoginDialog: (value?: boolean) => void;
   toggleRegisterDialog: (value?: boolean) => void;
   login: (data: LoginInput) => Promise<void>;
@@ -21,6 +27,7 @@ export const AuthContext = React.createContext<IAuthContext>({
   isAuthenticated: false,
   loginDialog: false,
   registerDialog: false,
+  message: null,
   toggleLoginDialog: undefined,
   toggleRegisterDialog: undefined,
   login: undefined,
@@ -32,8 +39,10 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginDialog, setLoginDialog] = useState<boolean>(false);
   const [registerDialog, setRegisterDialog] = useState<boolean>(false);
+  const [message, setMessage] = useState<MessageProps>(null);
 
   const { route, push: routeTo } = useRouter();
+  const { data: notification } = useNotifier();
 
   useEffect(() => {
     // handling protected routes
@@ -47,17 +56,53 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }, [route]);
 
-  const login = (data: LoginInput): any => {
-    // login user
-    // setLoginDialog(false);
+  useEffect(() => {
+    if (notification) {
+      setLoginDialog(false);
+      setRegisterDialog(false);
+    }
+  }, [notification]);
+
+  const dismissMessage = () => {
+    console.log("clicking");
+    setMessage(null);
   };
 
-  const register = (data: User): any => {
-    // register user
+  const loginUser = async (data: LoginInput): Promise<void> => {
+    login(data)
+      .then((responseData) => {
+        setIsAuthenticated(true);
+        return setLoginDialog(false);
+      })
+      .catch((error: AxiosError) => {
+        return setMessage({
+          data: {
+            text: error.response.data.message || "An error occured",
+            status: "error",
+          },
+          onDismiss: dismissMessage,
+        });
+      });
   };
 
-  const logout = () => {
-    // logout user
+  const registerUser = async (data: User): Promise<void> => {
+    register(data)
+      .then((responseData) => {})
+      .catch((error: AxiosError) => {
+        console.log(error);
+        return setMessage({
+          data: {
+            text: error.response.data.message || "An error occured",
+            status: "error",
+          },
+          onDismiss: dismissMessage,
+        });
+      });
+  };
+
+  const logoutUser = () => {
+    logout();
+    setIsAuthenticated(true);
   };
 
   return (
@@ -66,12 +111,13 @@ export const AuthProvider: React.FC = ({ children }) => {
         isAuthenticated,
         loginDialog,
         registerDialog,
+        message,
         toggleLoginDialog: (value) => setLoginDialog(value || !loginDialog),
         toggleRegisterDialog: (value) =>
           setRegisterDialog(value || !registerDialog),
-        login,
-        register,
-        logout,
+        login: loginUser,
+        register: registerUser,
+        logout: logoutUser,
       }}
     >
       {children}

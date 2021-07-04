@@ -10,11 +10,12 @@ import { LoginDialog } from "../User/LoginDialog";
 import classnames from "classnames";
 import { RegisterDialog } from "../User/RegisterDialog";
 
-export default function Body({ children }) {
+export default function Layout({ children }) {
   const { data: notification, close: closeNotification } = useNotifier();
   const {
     loginDialog,
     registerDialog,
+    message,
     toggleLoginDialog,
     toggleRegisterDialog,
     register,
@@ -78,6 +79,7 @@ export default function Body({ children }) {
           {/* Login Dialog */}
           {loginDialog && (
             <LoginDialog
+              message={message}
               isOpen={loginDialog}
               toggle={toggleLoginDialog}
               onOpenRegisterDialog={toggleAuthDialogs}
@@ -88,6 +90,7 @@ export default function Body({ children }) {
           {/* Register Dialog */}
           {registerDialog && (
             <RegisterDialog
+              message={message}
               isOpen={registerDialog}
               toggle={toggleRegisterDialog}
               onOpenLoginDialog={toggleAuthDialogs}
