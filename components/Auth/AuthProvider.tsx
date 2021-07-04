@@ -63,6 +63,11 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }, [notification]);
 
+  useEffect(() => {
+    // reset messages
+    setMessage(null);
+  }, [loginDialog, registerDialog]);
+
   const dismissMessage = () => {
     setMessage(null);
   };
