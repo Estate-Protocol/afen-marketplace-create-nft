@@ -64,12 +64,11 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [notification]);
 
   const dismissMessage = () => {
-    console.log("clicking");
     setMessage(null);
   };
 
   const loginUser = async (data: LoginInput): Promise<void> => {
-    login(data)
+    await login(data)
       .then((responseData) => {
         setIsAuthenticated(true);
         return setLoginDialog(false);
@@ -86,10 +85,11 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   const registerUser = async (data: User): Promise<void> => {
-    register(data)
-      .then((responseData) => {})
+    await register(data)
+      .then((responseData) => {
+        return responseData;
+      })
       .catch((error: AxiosError) => {
-        console.log(error);
         return setMessage({
           data: {
             text: error.response.data.message || "An error occured",

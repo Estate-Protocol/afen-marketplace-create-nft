@@ -34,13 +34,9 @@ export const logout = () => {
  * @return {Promise<User> | AxiosError} User
  */
 export const register = async (data: User): Promise<AxiosResponse<User>> => {
-  try {
-    const response = await axios.post("/user/register", data);
+  const response = await axios.post("/user/register", data);
 
-    return response.data;
-  } catch (err) {
-    handleAxiosRequestError(err);
-  }
+  return response;
 };
 
 /**
