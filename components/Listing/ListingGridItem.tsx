@@ -7,12 +7,14 @@ import Flex from "../Layout/Flex";
 interface ListingGridItemProps {
   item: NFT;
   width?: string;
+  loading?: boolean;
   onClick: () => void;
 }
 
 export default function HomeListingGridItem({
   item,
   width,
+  // loading,
   onClick,
 }: ListingGridItemProps) {
   const getPrice = () => {
@@ -38,7 +40,7 @@ export default function HomeListingGridItem({
       }`}
       onClick={onClick}
     >
-      <CardMedia src={item.path} />
+      <CardMedia src={""} />
       <CardText>
         <Typography
           textWidth="w-full"
@@ -49,7 +51,12 @@ export default function HomeListingGridItem({
         </Typography>
         <Flex style="mb-3 mt-1">
           {/* <CardAvatar image={item.} /> */}
-          <Typography size="x-small" style="text-gray-500">
+          <Typography
+            truncate
+            textWidth={"w-24"}
+            size="x-small"
+            style="text-gray-500"
+          >
             {item.wallet}
           </Typography>
         </Flex>
