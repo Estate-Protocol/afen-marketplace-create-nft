@@ -79,7 +79,7 @@ export default function Token({ nft }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
 
-  const tabs = ["Description", nft.transactions && "Transactions", "Details"];
+  const tabs = ["Description", "Details", nft.transactions && "Transactions"];
 
   const getPrice = () => {
     let price = {
