@@ -95,6 +95,8 @@ export default function Token({ nft }: NFTPageProps) {
           <div className="h-96 px-8 md:px-0 md:h-5/6 w-full md:w-5/6 my-auto">
             <div className="relative h-full w-full">
               <Image
+                loading="eager"
+                priority={true}
                 src={nft.path}
                 layout="fill"
                 className="overflow-hidden shadow-lg rounded-xl"

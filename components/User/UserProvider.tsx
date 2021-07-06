@@ -87,7 +87,7 @@ export const UserProvider: React.FC = ({ children }) => {
       setSigner(provider.getSigner());
     } else {
       if (!mobile) {
-        getProvider();
+        // getProvider();
       }
     }
   }, [provider]);
