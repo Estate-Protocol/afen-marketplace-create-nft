@@ -101,10 +101,10 @@ export default function Token({ nft }: NFTPageProps) {
   const getPrice = () => {
     let price = {
       currency: "AFEN",
-      amount: nft.afenPrice,
+      amount: nft?.afenPrice,
     };
 
-    if (nft.afenPrice === 0) {
+    if (nft?.afenPrice === 0) {
       price = {
         currency: "BNB",
         amount: nft.bnbPrice,
