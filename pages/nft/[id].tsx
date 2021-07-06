@@ -79,7 +79,7 @@ export default function Token({ nft }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
 
-  const tabs = ["Description", "Details", nft.transactions && "Transactions"];
+  const tabs = ["Description", "Transaction", "Details"];
 
   const getPrice = () => {
     let price = {
@@ -183,6 +183,17 @@ export default function Token({ nft }: NFTPageProps) {
                 </div>
               </TabPanel>
               <TabPanel>
+                <div>
+                  {nft?.transactions?.length ? (
+                    <div></div>
+                  ) : (
+                    <Typography sub bold size="small">
+                      No transactions yet
+                    </Typography>
+                  )}
+                </div>
+              </TabPanel>
+              <TabPanel>
                 <div className="my-5">
                   <Typography size="x-small" sub bold>
                     Last update
@@ -199,9 +210,6 @@ export default function Token({ nft }: NFTPageProps) {
                     {moment(nft.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
                   </Typography>
                 </div>
-                {tabs.includes("Transactions") && (
-                  <div>{/* Transactions */}</div>
-                )}
               </TabPanel>
             </Tabs>
           </div>
