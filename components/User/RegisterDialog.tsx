@@ -17,6 +17,7 @@ import { GrCheckmark } from "react-icons/gr";
 import { MdContentCopy } from "react-icons/md";
 import { copyToClipboard } from "../../utils/misc";
 import classNames from "classnames";
+import { IoCloseSharp } from "react-icons/io5";
 
 interface RegisterDialogProps {
   isOpen?: boolean;
@@ -44,7 +45,8 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
     React.useState<{ [key: string]: string | null }>(null);
   const [copied, setCopied] = React.useState(false);
 
-  const { user, isConnectingWallet, connectWallet } = useUser();
+  const { user, isConnectingWallet, connectWallet, disconnectWallet } =
+    useUser();
 
   React.useEffect(() => {
     if (user?.address) {
@@ -91,6 +93,8 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
     });
   };
 
+  const walletConnected = !!user?.address;
+
   const disabled =
     validateName(name) ||
     validateEmail(email) ||
@@ -126,15 +130,23 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
               type="secondary"
               block
               icon
-              style={classNames("mb-4", { "border-green-500": user?.address })}
+              style={classNames("mb-4", {
+                "border-green-500 mb-0": walletConnected,
+              })}
               inputType="button"
               loading={isConnectingWallet}
               disabled={isConnectingWallet}
               onClick={user?.address ? undefined : connectWallet}
             >
-              {user.address ? (
+              {walletConnected ? (
                 <>
-                  <Typography style="mr-2">Wallet Connected</Typography>
+                  <Typography style="mr-2 text-green-500">
+                    Wallet Connected
+                  </Typography>
+                  <IoCloseSharp
+                    className="text-2xl mr-2"
+                    onClickCapture={disconnectWallet}
+                  />
                   {copied ? (
                     <GrCheckmark className="text-xl" />
                   ) : (
@@ -158,6 +170,7 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
                 </>
               )}
             </Button>
+
             <TextInput
               label="Name"
               type="text"
@@ -192,7 +205,7 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
             <Button
               block
               loading={loading}
-              style="mt-12"
+              style="mt-8"
               inputType="submit"
               disabled={disabled}
             >
