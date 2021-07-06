@@ -57,18 +57,29 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 
   const nft = NFTs.find((item) => item._id === id);
 
-  if (!nft) {
+  if (nft) {
+    try {
+      const transactions = await api.post("/transaction/list", {
+        pageNo: 1,
+        numPerPage: 10,
+        filter: {
+          _id: nft._id,
+        },
+      });
+      nft.transactions = transactions?.data.list || [];
+    } catch (err) {}
+  } else {
     return { notFound: true };
   }
 
   return { props: { nft }, revalidate: 1 };
 };
 
-const tabs = ["Description", "Details"];
-
 export default function Token({ nft }: NFTPageProps) {
-  const { isFallback, push } = useRouter();
+  const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
+
+  const tabs = ["Description", nft.transactions && "Transactions", "Details"];
 
   const getPrice = () => {
     let price = {
@@ -188,6 +199,9 @@ export default function Token({ nft }: NFTPageProps) {
                     {moment(nft.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
                   </Typography>
                 </div>
+                {tabs.includes("Transactions") && (
+                  <div>{/* Transactions */}</div>
+                )}
               </TabPanel>
             </Tabs>
           </div>

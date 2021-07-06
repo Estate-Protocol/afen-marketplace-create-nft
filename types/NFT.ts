@@ -1,7 +1,9 @@
-export interface NFT {
+import { BaseType } from "./BaseType";
+import { User } from "./User";
+
+export interface NFT extends BaseType {
   isAuction: boolean;
   minimunBid: number;
-  _id: string;
   fileHash: string;
   path?: string;
   title: string;
@@ -13,7 +15,19 @@ export interface NFT {
   width?: number;
   height?: number;
   depth?: number;
-  createdAt: string;
-  updatedAt: string;
   nftId: number;
+  transactions?: NFTTransaction[];
+}
+
+export interface NFTTransaction extends BaseType {
+  user: User;
+  type?: NFTTransactionEnum;
+  nft: NFT;
+  price: number;
+}
+
+export interface NFTTransactionEnum {
+  BUY: "BUY";
+  SELL: "SELL";
+  BID: "BID";
 }
