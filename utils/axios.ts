@@ -1,5 +1,5 @@
 import axios from "axios";
-// import cookieCutter from "cookie-cutter";
+import Cookies from "cookies";
 
 // Get a cookie
 // const token = cookieCutter.get("authToken");

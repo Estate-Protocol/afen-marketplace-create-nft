@@ -5,7 +5,10 @@ import useNotifier from "../../hooks/useNotifier";
 // import useUser from "../../hooks/useUser";
 import { User } from "../../types/User";
 import { MessageProps } from "../Message/Message";
-import { login, logout, register } from "./apis/auth";
+import { authCookieName, login, logout, register } from "./apis/auth";
+import cookieCutter from "cookie-cutter";
+import useUser from "../../hooks/useUser";
+import { getUser } from "../User/api";
 
 const protectedRoutes = ["/create", "/user"];
 
@@ -43,6 +46,20 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const { route, push: routeTo } = useRouter();
   const { data: notification } = useNotifier();
+  const { user, setUser, disconnectWallet } = useUser();
+
+  useEffect(() => {
+    const token = cookieCutter.get(authCookieName);
+    if (token) {
+      if (user?.address) {
+        getUser(user?.address).then((response) => {
+          setIsAuthenticated(true);
+          setUser(response);
+        });
+      }
+      setIsAuthenticated(true);
+    }
+  });
 
   // useEffect(() => {
   //   // handling protected routes
@@ -76,6 +93,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     await login(data)
       .then((responseData) => {
         setIsAuthenticated(true);
+        setUser(responseData.data.user);
         return setLoginDialog(false);
       })
       .catch((error: AxiosError) => {
@@ -107,7 +125,9 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const logoutUser = () => {
     logout();
-    setIsAuthenticated(true);
+    setUser(null);
+    disconnectWallet();
+    setIsAuthenticated(false);
   };
 
   return (

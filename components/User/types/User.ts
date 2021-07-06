@@ -1,5 +1,6 @@
-export interface User {
-  _id: string;
+import { BaseType } from "../../../types/BaseType";
+
+export interface User extends BaseType {
   name: string;
   email: string;
   password?: string;
@@ -11,6 +12,4 @@ export interface User {
   portfolio?: string;
   description?: string;
   balance: number;
-  createdAt: string;
-  updatedAt: string;
 }

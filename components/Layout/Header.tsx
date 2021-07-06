@@ -18,7 +18,7 @@ export default function Header() {
   const { user: userData, mobileWalletConnect, disconnectWallet } = useUser();
   const { isAuthenticated } = useAuth();
 
-  const { toggleLoginDialog } = useAuth();
+  const { toggleLoginDialog, logout } = useAuth();
 
   const [mobileMenu, setMobileMenu] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
@@ -73,16 +73,18 @@ export default function Header() {
 
           {isAuthenticated && (
             <Typography style="mr-8" sub bold>
-              <Link href={`/user/` + userData.address}>My Collection</Link>
+              <Link href={`/user/` + userData?.address}>My Collection</Link>
             </Typography>
           )}
 
           <Button
             type="plain"
-            onClick={() => toggleLoginDialog(true)}
+            onClick={() =>
+              isAuthenticated ? logout() : toggleLoginDialog(true)
+            }
             style="mr-8"
           >
-            <Typography sub>Login</Typography>
+            <Typography sub>{isAuthenticated ? "Logout" : "Login"}</Typography>
           </Button>
 
           <Button type="primary" onClick={() => router.push("/create")}>
@@ -183,7 +185,7 @@ export default function Header() {
                       {isAuthenticated && (
                         <>
                           <Typography style="mt-3">
-                            <Link href={`/user/` + userData.address}>
+                            <Link href={`/user/` + userData?.address}>
                               My Collection
                             </Link>
                           </Typography>

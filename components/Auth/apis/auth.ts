@@ -5,7 +5,7 @@ import { api as axios } from "../../../utils/axios";
 import { handleAxiosRequestError } from "../../../utils/misc";
 import { LoginInput } from "../AuthProvider";
 
-const authCookieName = "authToken";
+export const authCookieName = "authToken";
 
 /**
  * Login user
@@ -13,10 +13,10 @@ const authCookieName = "authToken";
  * @return {Promise<AxiosResponse<User>>} User
  */
 export const login = async (data: LoginInput) => {
-  const response = await axios.post<User>("/user/login", data);
+  const response = await axios.post("/user/login", data);
 
   if (response.status === 200) {
-    cookieCutter.set(authCookieName, response.data.token);
+    await cookieCutter.set(authCookieName, response.data.token);
   }
   return response;
 };

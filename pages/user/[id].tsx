@@ -18,6 +18,7 @@ import UserNFTs from "../../components/User/UserNFTs";
 import { NFT } from "../../types/NFT";
 import Button from "../../components/IO/Button";
 import withAuth from "../../components/HOC/withAuth";
+import { getUser } from "../../components/User/api";
 
 interface UserProfilePageProps {
   data: User;
@@ -54,6 +55,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const { id } = params;
+  // const userResponse = await getUser(id);
   const response = await api.post("nft/list", {
     pageNo: 1,
     numPerPage: 50,

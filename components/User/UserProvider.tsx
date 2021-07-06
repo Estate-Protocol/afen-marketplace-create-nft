@@ -22,7 +22,7 @@ export interface UserDetails {
 
 export type IUserContext = {
   user: UserDetails | null;
-  getUser: (wallet: string) => Promise<UserData>;
+  setUser: (data: UserData) => void;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   isConnectingWallet: boolean;
@@ -35,7 +35,7 @@ export type IUserContext = {
 
 export const UserContext = React.createContext<IUserContext>({
   user: null,
-  getUser: () => undefined,
+  setUser: () => undefined,
   connectWallet: () => undefined,
   disconnectWallet: () => undefined,
   isConnectingWallet: false,
@@ -241,7 +241,7 @@ export const UserProvider: React.FC = ({ children }) => {
           balance,
           address,
         },
-        getUser,
+        setUser,
         connectWallet,
         disconnectWallet,
         isConnectingWallet,
