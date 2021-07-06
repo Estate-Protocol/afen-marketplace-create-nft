@@ -7,6 +7,7 @@ import { getUser } from "./api";
 import { IAssetData } from "../../types/WalletConnect";
 import { User as UserData } from "./types/User";
 import { isMobile } from "../../utils/misc";
+import { messages } from "../../constants/messages";
 
 interface SavedUser {
   address: string;
@@ -155,11 +156,7 @@ export const UserProvider: React.FC = ({ children }) => {
       await requestPermissions();
       await getAccount();
     } catch (err) {
-      notify({
-        status: "info",
-        title: "Connect MetaMask",
-        text: "Please install MetaMask, to connect your wallet.",
-      });
+      notify(messages.walletConnectionError);
     }
   };
 

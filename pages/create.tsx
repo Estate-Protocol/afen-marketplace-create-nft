@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { NFT } from "../types/NFT";
 import useAuth from "../hooks/useAuth";
 import withAuth from "../components/HOC/withAuth";
+import { messages } from "../constants/messages";
 
 export interface CreateFormResponse {
   title?: string;
@@ -152,11 +153,7 @@ export const Create: React.FC = () => {
       }
     } catch (err) {
       if (err.code === 4001) {
-        notify({
-          title: "Cancelled",
-          status: "error",
-          text: "To create NFT please accept the request by clicking confirm when MetaMask dialog popups",
-        });
+        notify(messages.requestCancelled);
       } else {
         notify({
           title: "Sorry",

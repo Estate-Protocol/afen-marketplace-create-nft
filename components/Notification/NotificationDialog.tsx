@@ -6,6 +6,7 @@ import Flex from "../Layout/Flex";
 import { NotificationData } from "./NotificationProvider";
 import classNames from "classnames";
 import { Dialog } from "../Dialog/Dialog";
+import Button from "../IO/Button";
 
 interface NotificationDialogProps {
   data: NotificationData;
@@ -18,7 +19,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
 }) => (
   <Dialog onCloseDialog={close}>
     <div className="md:w-96">
-      <Flex spaceBetween center style="mb-5">
+      <Flex spaceBetween center style="mb-3">
         <Title
           style={classNames({
             "text-red-500": data.status && data.status === "error",
@@ -35,6 +36,19 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
       <Typography sub bold style="mb-2">
         {data.text}
       </Typography>
+      {data.action && (
+        <Button
+          block
+          style="mt-3"
+          type="secondary"
+          onClick={() => {
+            data.action.onClick();
+            close();
+          }}
+        >
+          {data.action.text}
+        </Button>
+      )}
     </div>
   </Dialog>
 );

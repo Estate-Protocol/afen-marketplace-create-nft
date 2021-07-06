@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 
+export enum NotificationDataStatusEnum {
+  "ERROR" = "error",
+  "SUCCESS" = "success",
+  "INFO" = "info",
+}
 export interface NotificationData {
   status?: "error" | "success" | "info" | null;
   title?: string;
   text: string;
+  action?: {
+    text: string;
+    onClick: () => void;
+  };
 }
 
 export interface INotifcationContext {

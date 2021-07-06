@@ -12,6 +12,14 @@ import "react-tabs/style/react-tabs.css";
 import moment from "moment";
 import { BsArrowUpRight } from "react-icons/bs";
 import { NFT } from "../../types/NFT";
+import Button from "../../components/IO/Button";
+import useUser from "../../hooks/useUser";
+// import useContract from "../../hooks/useContract";
+// import { AFEN_NFT_ABI } from "../../contracts/abis/AfenNFT";
+// import { AfenNft } from "../../contracts/types/AfenNft";
+import useAuth from "../../hooks/useAuth";
+import useNotifier from "../../hooks/useNotifier";
+import { messages } from "../../constants/messages";
 
 interface NFTPageProps {
   nft: NFT;
@@ -78,8 +86,17 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 export default function Token({ nft }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
+
+  const { user, connectWallet } = useUser();
+  const { isAuthenticated, toggleLoginDialog } = useAuth();
+  // const { setAbi, contractSigned } = useContract();
+  const { notify } = useNotifier();
 
   const tabs = ["Description", "Transaction", "Details"];
+  const isOwner = user?.address === nft.wallet;
+
+  const disabled = isOwner;
 
   const getPrice = () => {
     let price = {
@@ -97,6 +114,71 @@ export default function Token({ nft }: NFTPageProps) {
     return price;
   };
 
+  const tokenId = getPrice().currency === "AFEN" ? 0 : 1;
+
+  const handleClick = async () => {
+    if (!isAuthenticated) {
+      return toggleLoginDialog(true);
+    }
+
+    if (!user.address) {
+      return notify({
+        ...messages.connectWallet,
+        action: {
+          text: "Connect Wallet",
+          onClick: connectWallet,
+        },
+      });
+    }
+
+    notify({
+      title: `Buy "${nft.title}"`,
+      text: "You are about to buy this NFT, click continue to proceed",
+      action: {
+        text: "Continue",
+        onClick: handleBuyNFT,
+      },
+    });
+  };
+
+  const handleBuyNFT = async () => {
+    setLoading(true);
+
+    try {
+      // setAbi(AFEN_NFT_ABI);
+      // const nftContract = contractSigned as AfenNft;
+      // await nftContract.setApprovalForAll(user.address, true, {
+      //   from: nft.user._id,
+      // });
+      // await nftContract.buy(nft.user._id, nft.nftId, 10, tokenId, {
+      //   from: user.address,
+      // });
+
+      notify({
+        status: "success",
+        title: `"${nft.title}" It's yours!`,
+        text: "Check your wallet, you should find it",
+        action: {
+          onClick: undefined,
+          text: "View",
+        },
+      });
+    } catch (e) {
+      // catch error cases
+      // - insufficient funds
+      // - wrong network
+      // - request cancelled
+      return notify({
+        ...messages.transactionError,
+        action: {
+          text: "Retry",
+          onClick: handleClick,
+        },
+      });
+    }
+    setLoading(false);
+  };
+
   return isFallback ? (
     <div></div>
   ) : (
@@ -110,7 +192,7 @@ export default function Token({ nft }: NFTPageProps) {
                 priority={true}
                 src={nft.path}
                 layout="fill"
-                className="overflow-hidden shadow-lg rounded-xl"
+                className="overflow-hidden shadow-lg"
                 objectFit="contain"
                 objectPosition="fill"
               ></Image>
@@ -212,6 +294,17 @@ export default function Token({ nft }: NFTPageProps) {
                 </div>
               </TabPanel>
             </Tabs>
+          </div>
+          <div className="mt-auto pt-12 md:pt-4">
+            <Button
+              block
+              size="large"
+              onClick={handleClick}
+              loading={loading}
+              disabled={disabled}
+            >
+              Buy
+            </Button>
           </div>
         </div>
       </div>
