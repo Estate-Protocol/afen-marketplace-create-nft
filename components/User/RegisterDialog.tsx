@@ -117,6 +117,7 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
             <Message
               data={message.data}
               dismissable={message.dismissable}
+              onDismiss={message.onDismiss}
               style="mt-4"
             />
           )}

@@ -80,6 +80,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
             <Message
               data={message.data}
               dismissable={message.dismissable}
+              onDismiss={message.onDismiss}
               style="mt-4"
             />
           )}
