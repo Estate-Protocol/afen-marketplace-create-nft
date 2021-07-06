@@ -55,7 +55,7 @@ export default function Header() {
 
   return (
     <header>
-      <div className="flex flex-row px-5 sm:px-20 py-3 md:px-10 lg:px-16 mx-auto overflow-x-hidden border-b-2 bg-white items-center fixed top-0 w-screen z-40">
+      <div className="flex flex-row px-5 md:px-10 lg:px-16 py-3 mx-auto overflow-x-hidden border-b-2 bg-white items-center fixed top-0 w-screen z-40">
         <Link href="/">
           <div className="inline-flex items-center cursor-pointer">
             <Image src="/logo.png" width="30" height="30" layout="fixed" />
