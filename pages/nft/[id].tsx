@@ -94,7 +94,7 @@ export default function Token({ nft }: NFTPageProps) {
   const { notify } = useNotifier();
 
   const tabs = ["Description", "Transaction", "Details"];
-  const isOwner = user?.address === nft.wallet;
+  const isOwner = user?.address === nft?.wallet;
 
   const disabled = isOwner;
 
