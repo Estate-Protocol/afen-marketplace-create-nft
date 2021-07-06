@@ -7,7 +7,7 @@ import { FaTelegramPlane } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="w-screen bg-gray-50 px-5 sm:px-20 py-12">
+    <footer className="w-screen bg-gray-50 px-5 sm:px-20 py-12 mt-auto">
       <div className="flex flex-wrap items-end">
         <div className="mr-auto mb-10 md:mb-0">
           <Image src="/logo.png" width={40} height={40} />

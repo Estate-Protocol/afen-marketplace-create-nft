@@ -17,6 +17,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import UserNFTs from "../../components/User/UserNFTs";
 import { NFT } from "../../types/NFT";
 import Button from "../../components/IO/Button";
+import withAuth from "../../components/HOC/withAuth";
 
 interface UserProfilePageProps {
   data: User;
@@ -124,4 +125,4 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ nfts }) => {
 };
 
 UserProfilePage.displayName = "UserProfilePage";
-export default UserProfilePage;
+export default withAuth(UserProfilePage);

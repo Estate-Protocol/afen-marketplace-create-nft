@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import CreateFormPage, { CreateFormInput } from "../components/Create";
-import ConnectWalletPage from "../components/User/ConnectWalletPage";
 import { AfenNft } from "../contracts/types";
 import { AFEN_NFT_ABI } from "../contracts/abis/AfenNFT";
 import { BigNumber, ContractTransaction } from "ethers";
@@ -10,6 +9,8 @@ import useContract from "../hooks/useContract";
 import useUser from "../hooks/useUser";
 import { useRouter } from "next/router";
 import { NFT } from "../types/NFT";
+import useAuth from "../hooks/useAuth";
+import withAuth from "../components/HOC/withAuth";
 
 export interface CreateFormResponse {
   title?: string;
@@ -17,10 +18,11 @@ export interface CreateFormResponse {
   status?: "error" | "success" | "info";
 }
 
-export default function Create() {
+export const Create: React.FC = () => {
   const { contractSigned, setAbi } = useContract();
   const { user } = useUser();
   const { notify } = useNotifier();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -123,7 +125,7 @@ export default function Create() {
           nftContract
         );
 
-        if (createdNft.hash) {
+        if (createdNft.hash && nft) {
           // update nftId
           // const response = await api.post(
           //   "/nft/update/",
@@ -167,14 +169,16 @@ export default function Create() {
     setLoading(false);
   };
 
-  return user?.address ? (
-    <CreateFormPage
-      onSubmit={handleSubmit}
-      wallet={user?.address}
-      loading={loading}
-      message={message}
-    />
-  ) : (
-    <ConnectWalletPage />
+  return (
+    isAuthenticated && (
+      <CreateFormPage
+        onSubmit={handleSubmit}
+        wallet={user?.address}
+        loading={loading}
+        message={message}
+      />
+    )
   );
-}
+};
+
+export default withAuth(Create);

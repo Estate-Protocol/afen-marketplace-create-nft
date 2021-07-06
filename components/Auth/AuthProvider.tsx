@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import useNotifier from "../../hooks/useNotifier";
-import useUser from "../../hooks/useUser";
+// import useUser from "../../hooks/useUser";
 import { User } from "../../types/User";
 import { MessageProps } from "../Message/Message";
 import { login, logout, register } from "./apis/auth";
@@ -44,17 +44,17 @@ export const AuthProvider: React.FC = ({ children }) => {
   const { route, push: routeTo } = useRouter();
   const { data: notification } = useNotifier();
 
-  useEffect(() => {
-    // handling protected routes
-    if (protectedRoutes.includes(route)) {
-      if (!isAuthenticated) {
-        // display login dialog
-        // TODO: improve by preventing next route rather than routing to home
-        routeTo("/");
-        setLoginDialog(true);
-      }
-    }
-  }, [route]);
+  // useEffect(() => {
+  //   // handling protected routes
+  //   if (protectedRoutes.includes(route)) {
+  //     if (!isAuthenticated) {
+  //       // display login dialog
+  //       // TODO: improve by preventing next route rather than routing to home
+  //       routeTo("/");
+  //       setLoginDialog(true);
+  //     }
+  //   }
+  // }, [route]);
 
   useEffect(() => {
     if (notification) {

@@ -9,6 +9,7 @@ import useAuth from "../../hooks/useAuth";
 import { LoginDialog } from "../User/LoginDialog";
 import classnames from "classnames";
 import { RegisterDialog } from "../User/RegisterDialog";
+import withAuth from "../HOC/withAuth";
 
 export default function Layout({ children }) {
   const { data: notification, close: closeNotification } = useNotifier();
@@ -69,7 +70,7 @@ export default function Layout({ children }) {
           />
           <meta name="viewport" content="width=device-width" />
         </Head>
-        <div>
+        <div className="flex flex-col min-h-screen justify-between">
           <Header />
           {/* Notification */}
           {notification && (

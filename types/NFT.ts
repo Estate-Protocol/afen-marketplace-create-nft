@@ -15,4 +15,5 @@ export interface NFT {
   depth?: number;
   createdAt: string;
   updatedAt: string;
+  nftId: number;
 }

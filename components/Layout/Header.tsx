@@ -16,6 +16,7 @@ export default function Header() {
   const node = React.useRef();
   const router = useRouter();
   const { user: userData, mobileWalletConnect, disconnectWallet } = useUser();
+  const { isAuthenticated } = useAuth();
 
   const { toggleLoginDialog } = useAuth();
 
@@ -70,7 +71,7 @@ export default function Header() {
             </a>
           </Typography>
 
-          {userData.address && (
+          {isAuthenticated && (
             <Typography style="mr-8" sub bold>
               <Link href={`/user/` + userData.address}>My Collection</Link>
             </Typography>
@@ -112,7 +113,7 @@ export default function Header() {
               >
                 <div className="w-full">
                   <>
-                    {userData.address && (
+                    {isAuthenticated && (
                       <Flex center style="mb-3 overflow-hidden w-full">
                         <div className="mr-3">
                           <div className="relative h-12 w-12 rounded-full bg-gray-300">
@@ -179,7 +180,7 @@ export default function Header() {
                           Get Started
                         </a>
                       </Typography>
-                      {userData.address && (
+                      {isAuthenticated && (
                         <>
                           <Typography style="mt-3">
                             <Link href={`/user/` + userData.address}>
@@ -209,7 +210,7 @@ export default function Header() {
                       : handleMobileConnection()
                   }
                 >
-                  {userData.address ? (
+                  {isAuthenticated ? (
                     "Create"
                   ) : (
                     <>

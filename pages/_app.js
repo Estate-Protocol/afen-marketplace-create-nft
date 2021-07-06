@@ -5,7 +5,9 @@ import { AuthProvider } from "../components/Auth";
 import "../styles/globals.css";
 import Layout from "../components/Layout/";
 
-export function getInitialProps(ctx) {}
+export function getInitialProps(ctx) {
+  
+}
 
 function App({ Component, pageProps }) {
   return (
