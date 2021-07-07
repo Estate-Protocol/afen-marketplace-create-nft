@@ -1,4 +1,5 @@
 import React, { FormEvent } from "react";
+import { IoCloseSharp } from "react-icons/io5";
 import { validateEmail, validatePassword } from "../../utils/validation";
 import { LoginInput } from "../Auth";
 import { Dialog } from "../Dialog/Dialog";
@@ -6,6 +7,7 @@ import Button from "../IO/Button";
 import TextInput from "../IO/TextInput";
 import Title from "../IO/Title";
 import Typography from "../IO/Typography";
+import Flex from "../Layout/Flex";
 import { Message, MessageProps } from "../Message/Message";
 
 interface LoginDialogProps {
@@ -63,7 +65,14 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   return (
     <Dialog onCloseDialog={toggle} isOpen={isOpen}>
       <div className="md:w-80">
-        <Title>Login</Title>
+        <Flex spaceBetween center style="mb-3">
+          <Title>Login</Title>
+          <IoCloseSharp
+            className="text-3xl text-gray-400 cursor-pointer"
+            onClick={() => toggle()}
+          />
+        </Flex>
+
         <Typography size="small">
           Don't have an account?{" "}
           <Button
@@ -75,6 +84,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
             Register
           </Button>
         </Typography>
+
         <form onSubmit={handleSubmit}>
           {message?.data.text && (
             <Message

@@ -154,6 +154,8 @@ export default function Token({ nft }: NFTPageProps) {
       //   from: user.address,
       // });
 
+      // update nft transaction
+
       notify({
         status: "success",
         title: `"${nft.title}" It's yours!`,

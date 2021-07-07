@@ -18,6 +18,7 @@ import { MdContentCopy } from "react-icons/md";
 import { copyToClipboard } from "../../utils/misc";
 import classNames from "classnames";
 import { IoCloseSharp } from "react-icons/io5";
+import Flex from "../Layout/Flex";
 
 interface RegisterDialogProps {
   isOpen?: boolean;
@@ -104,7 +105,13 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
   return (
     <Dialog isOpen={isOpen} onCloseDialog={toggle}>
       <div className="md:w-80">
-        <Title>Register</Title>
+        <Flex spaceBetween center style="mb-3">
+          <Title>Register</Title>
+          <IoCloseSharp
+            className="text-3xl text-gray-400 cursor-pointer"
+            onClick={() => toggle()}
+          />
+        </Flex>
         <Typography size="small" style="mb">
           Already have an account?{" "}
           <Button
