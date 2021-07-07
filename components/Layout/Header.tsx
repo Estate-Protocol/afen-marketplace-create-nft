@@ -73,7 +73,7 @@ export default function Header() {
 
           {isAuthenticated && (
             <Typography style="mr-8" sub bold>
-              <Link href={`/user/` + userData?.address}>My Collection</Link>
+              <Link href={`/user/` + userData?.user?._id}>My Collection</Link>
             </Typography>
           )}
 

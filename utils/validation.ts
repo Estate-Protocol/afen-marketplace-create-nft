@@ -6,6 +6,8 @@ export const emailValidationRegex =
 export const passwordValidation =
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
+export const linkValidation = /^(?:https?:\/\/)?(?:www\.)?(mailto:)?(tel:)?/i;
+
 export const validateName = (name: string) =>
   !nameValidation.test(name) || !name.length;
 
@@ -14,3 +16,6 @@ export const validateEmail = (email: string) =>
 
 export const validatePassword = (password: string) =>
   !passwordValidation.test(password) || !password.length;
+
+export const validateLink = (link: string) =>
+  !linkValidation.test(link) || !link.length;

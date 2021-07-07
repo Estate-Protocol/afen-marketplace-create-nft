@@ -2,23 +2,25 @@ import { api } from "../../utils/axios";
 import { IAssetData, IParsedTx, IGasPrices } from "../../types/WalletConnect";
 import { User } from "./types/User";
 
-export async function getUser(address: string): Promise<User> {
-  const response = await api.get(`/user/${address}`);
+export async function getUser(address: string, token?: string): Promise<User> {
+  const response = await api.get(`/user/${address}`, {
+    headers: { Authorization: `JWT ${token}` },
+  });
   return response.data?.user;
 }
 
-export async function createUser(data: User): Promise<User> {
-  const response = await api.post("/user/register", JSON.stringify(data), {
+export async function updateUser(
+  data: Pick<User, "name" | "twitter" | "instagram" | "portfolio"> & {
+    _id: string;
+  },
+  token?: string
+) {
+  const response = await api.post("/user/update", data, {
     headers: {
-      "content-type": "multipart/form-data",
+      Authorization: `JWT ${token}`,
     },
   });
-  const { result } = response.data;
-  return result;
-}
-
-export async function updateUser() {
-  // TODO
+  return response;
 }
 
 export async function deleteUser() {

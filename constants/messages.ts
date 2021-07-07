@@ -41,4 +41,14 @@ export const messages = {
     title: "Action cancelled",
     text: "Try again to initiate action",
   },
+  savedChanges: {
+    status: NotificationDataStatusEnum.SUCCESS,
+    title: "Saved changes",
+    text: "All good, changes have been saved",
+  },
+  sessionExpired: {
+    status: NotificationDataStatusEnum.INFO,
+    title: "Session expired",
+    text: "Please login",
+  },
 };

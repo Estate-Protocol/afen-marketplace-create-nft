@@ -214,7 +214,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                     ></Image>
                   </div> */}
                   <Typography sub bold truncate textWidth="w-40">
-                    @{nft?.user.name}
+                    {nft?.user.name}
                   </Typography>
                 </div>
               </Link>

@@ -53,11 +53,11 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (token) {
       if (user?.address) {
         getUser(user?.address).then((response) => {
-          setIsAuthenticated(true);
+          // setIsAuthenticated(true);
           setUser(response);
         });
       }
-      setIsAuthenticated(true);
+      // setIsAuthenticated(true);
     }
   });
 

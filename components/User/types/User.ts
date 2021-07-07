@@ -6,7 +6,7 @@ export interface User extends BaseType {
   password?: string;
   wallet: string;
   twitter?: string;
-  instragram?: string;
+  instagram?: string;
   avatar?: string;
   banner?: string;
   portfolio?: string;

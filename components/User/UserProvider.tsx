@@ -76,9 +76,21 @@ export const UserProvider: React.FC = ({ children }) => {
       if (savedUser.address) {
         setUser(savedUser.user);
         setAddress(savedUser.address);
-        // getBalance().finally(() => {
-        //   return;
-        // });
+
+        const user = getUser(savedUser.address)
+          .then((response) => {
+            setUser(response);
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                address,
+                response,
+              })
+            );
+          })
+          .catch((err) => {
+            setUser(savedUser.user);
+          });
       }
     }
   }, []);
