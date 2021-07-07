@@ -23,7 +23,7 @@ export default function Flex({
 }: FlexProps) {
   return (
     <div
-      className={`${smAndUp ? "md:flex" : "flex"} overflow-auto w-full ${
+      className={`${smAndUp ? "md:flex" : "flex"} w-full ${
         start ? "items-start " : "items-end "
       }
       ${wrap ? `flex-wrap md:flex-nowrap ` : ""}
