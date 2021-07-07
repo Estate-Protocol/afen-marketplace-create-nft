@@ -4,7 +4,7 @@ import { api as axios } from "../../utils/axios";
 export const fetchNFTs = async (
   pageNo: number,
   numPerPage?: number,
-  filter?: Partial<Pick<NFT, "afenPrice" | "bnbPrice">>,
+  filter?: Partial<Pick<NFT, "afenPrice" | "bnbPrice" | "wallet">>,
   sort?: "DESC" | "ASC"
 ) => {
   const response = await axios.post("/nft/list", {

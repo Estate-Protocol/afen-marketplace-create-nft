@@ -65,10 +65,22 @@ export default function UserProfileTab({
     });
   };
 
+  const handlePortfolioInput = (portfolio: string) => {
+    setPortfolio(portfolio);
+    setErrors({
+      ...errors,
+      portfolio:
+        portfolio.length && validateLink(portfolio)
+          ? "Please ensure this is a valid link"
+          : undefined,
+    });
+  };
+
   const disabled =
     validateName(name) ||
     validateLink(twitter) ||
     validateLink(instagram) ||
+    validateLink(portfolio) ||
     loading ||
     !!errors?.length;
 
@@ -132,7 +144,8 @@ export default function UserProfileTab({
             value={portfolio}
             disabled={loading}
             type="text"
-            onChange={setPortfolio}
+            error={errors?.portfolio}
+            onChange={handlePortfolioInput}
           ></TextInput>
           <Button
             size="large"

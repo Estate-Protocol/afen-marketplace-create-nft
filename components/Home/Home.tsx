@@ -27,7 +27,11 @@ export const Home: React.FC<HomeProps> = ({
           dataLength={data.length}
           next={onFetchMore}
           hasMore={hasMore}
-          loader={<Loader type="Oval" color="#ffffff" height={20} width={20} />}
+          loader={
+            <div className="mx-auto text-center">
+              <Loader type="Oval" color="#000000" height={20} width={20} />
+            </div>
+          }
         >
           <Title>Explore</Title>
           <ListingGrid data={data} loading={loading} />

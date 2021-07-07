@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 interface FlexProps {
   spaceBetween?: boolean;
@@ -9,6 +10,7 @@ interface FlexProps {
   style?: string;
   col?: boolean;
   center?: boolean;
+  spaceAround?: boolean;
 }
 
 export default function Flex({
@@ -20,17 +22,21 @@ export default function Flex({
   center,
   wrap,
   smAndUp,
+  spaceAround,
 }: FlexProps) {
   return (
     <div
-      className={`${smAndUp ? "md:flex" : "flex"} w-full ${
-        start ? "items-start " : "items-end "
-      }
-      ${wrap ? `flex-wrap md:flex-nowrap ` : ""}
-      ${spaceBetween ? "justify-between " : ""}
-      ${col ? "flex-col " : ""} 
-      ${center ? "items-center " : ""} 
-      ${style} `}
+      className={classNames(
+        " w-full",
+        smAndUp ? "md:flex" : "flex",
+        start ? "items-start" : "items-end ",
+        { "flex-wrap md:flex-nowrap": wrap },
+        { "justify-between": spaceBetween },
+        { "flex-col": col },
+        { "items-center": center },
+        { "justify-around": spaceAround },
+        style
+      )}
     >
       {children}
     </div>

@@ -1,22 +1,11 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import { FcCheckmark } from "react-icons/fc";
 import { copyToClipboard, parseUrl } from "../../utils/misc";
-import { GrInstagram, GrTwitter } from "react-icons/gr";
-import Title from "../../components/IO/Title";
-import Container from "../../components/Layout/Container";
 import Tabs from "../../components/Tabs/Tabs";
 import Typography from "../../components/IO/Typography";
 import { HiDuplicate } from "react-icons/hi";
 import { User } from "../../types/User";
-import useUser from "../../hooks/useUser";
-import ConnectWalletPage from "../../components/User/ConnectWalletPage";
 import { useRouter } from "next/router";
-import { api } from "../../utils/axios";
-import { GetStaticPaths, GetStaticProps } from "next";
-import UserNFTs from "../../components/User/UserNFTs";
-import { NFT } from "../../types/NFT";
-import Button from "../../components/IO/Button";
 import withAuth from "../../components/HOC/withAuth";
 import { getUser, updateUser } from "../../components/User/api";
 import { parseCookies } from "../../utils/auth";
@@ -27,6 +16,10 @@ import cookieCutter from "cookie-cutter";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
 import useAuth from "../../hooks/useAuth";
+import UserNFTTab from "../../components/User/UserNFTTab";
+import { GrTwitter, GrInstagram } from "react-icons/gr";
+import { HiOutlineLink } from "react-icons/hi";
+import Image from "next/image";
 
 interface UserProfilePageProps {
   authUser: User | null;
@@ -65,7 +58,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
   const { logout } = useAuth();
   const router = useRouter();
 
-  const { _id, name } = authUser;
+  const { _id, name, wallet, twitter, instagram, portfolio } = authUser;
+
+  console.log(wallet);
 
   React.useEffect(() => {}, []);
 
@@ -107,7 +102,6 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
           <Typography size="large" bold>
             {name}
           </Typography>
-
           <Flex>
             <Typography sub truncate textWidth="w-60" bold>
               {authUser?.wallet}
@@ -122,6 +116,50 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
               />
             )}
           </Flex>
+          <div className="mt-2">
+            {twitter?.length && (
+              <div>
+                <a
+                  className="inline-flex items-center"
+                  href={twitter}
+                  target="_blank"
+                >
+                  <GrTwitter className="text-md mr-1" />
+                  <Typography sub size="small">
+                    {parseUrl(twitter)}
+                  </Typography>
+                </a>
+              </div>
+            )}
+            {instagram?.length && (
+              <div>
+                <a
+                  className="inline-flex items-center"
+                  href={instagram}
+                  target="_blank"
+                >
+                  <GrInstagram className="text-md mr-1" />
+                  <Typography sub size="small" style="ml-2">
+                    {parseUrl(instagram)}
+                  </Typography>
+                </a>
+              </div>
+            )}
+            {portfolio?.length && (
+              <div>
+                <a
+                  className="inline-flex items-center"
+                  href={portfolio}
+                  target="_blank"
+                >
+                  <HiOutlineLink className="text-md mr-1" />
+                  <Typography sub size="small">
+                    {parseUrl(portfolio)}
+                  </Typography>
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -141,7 +179,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
               },
               {
                 title: "NFTs",
-                body: "<UserNFTs data={nfts} />",
+                body: <UserNFTTab wallet={wallet} />,
               },
             ]}
           />
