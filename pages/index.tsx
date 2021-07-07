@@ -2,6 +2,8 @@ import { useState } from "react";
 import HomePage from "../components/Home";
 import { fetchNFTs } from "../components/Home/apis";
 import { NFT } from "../types/NFT";
+import { getPlaiceholder } from "plaiceholder";
+import type { InferGetStaticPropsType } from "next";
 
 const NUM_PER_PAGE = 8;
 
@@ -21,7 +23,7 @@ export async function getServerSideProps() {
     });
 }
 
-export default function Home({ nft }) {
+export const Home = ({ nft }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<NFT[]>(nft);
   const [page, setPage] = useState(1);
@@ -36,6 +38,7 @@ export default function Home({ nft }) {
     setLoading(true);
     fetchNFTs(nextPage, NUM_PER_PAGE, null, "DESC")
       .then(({ data: fetchedData }) => {
+
         setData([...data, ...fetchedData.list]);
         setTotalNFTs(fetchedData.total);
       })
@@ -47,6 +50,10 @@ export default function Home({ nft }) {
     setLoading(false);
   };
 
+  const getBlurHash = async () => {
+    
+  }
+
   return (
     <>
       <HomePage
@@ -57,4 +64,6 @@ export default function Home({ nft }) {
       />
     </>
   );
-}
+};
+
+export default Home;

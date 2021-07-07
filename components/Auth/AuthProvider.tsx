@@ -90,6 +90,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   const loginUser = async (data: LoginInput): Promise<void> => {
+    setMessage(null);
     await login(data)
       .then((responseData) => {
         setIsAuthenticated(true);
@@ -108,6 +109,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   const registerUser = async (data: User): Promise<void> => {
+    setMessage(null);
     await register(data)
       .then((responseData) => {
         return responseData;

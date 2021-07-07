@@ -30,7 +30,7 @@ export const Message: React.FC<MessageProps> = ({
         break;
       case "info":
       default:
-        messageColors = "bg-gray-300";
+        messageColors = "bg-blue-500 text-white";
     }
 
     return messageColors;

@@ -5,6 +5,7 @@ import Container from "../Layout/Container";
 import ListingGrid from "../Listing/ListingGrid";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Typography from "../IO/Typography";
+import Loader from "react-loader-spinner";
 
 interface HomeProps {
   data: NFT[];
@@ -26,16 +27,7 @@ export const Home: React.FC<HomeProps> = ({
           dataLength={data.length}
           next={onFetchMore}
           hasMore={hasMore}
-          loader={
-            <Typography sub style="text-center">
-              Loading...
-            </Typography>
-          }
-          endMessage={
-            <Typography sub style="text-center">
-              Nothing more to show
-            </Typography>
-          }
+          loader={<Loader type="Oval" color="#ffffff" height={20} width={20} />}
         >
           <Title>Explore</Title>
           <ListingGrid data={data} loading={loading} />

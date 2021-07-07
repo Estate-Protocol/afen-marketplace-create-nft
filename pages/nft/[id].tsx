@@ -11,18 +11,20 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import moment from "moment";
 import { BsArrowUpRight } from "react-icons/bs";
-import { NFT } from "../../types/NFT";
+import { NFT, NFTTransaction } from "../../types/NFT";
 import Button from "../../components/IO/Button";
 import useUser from "../../hooks/useUser";
-// import useContract from "../../hooks/useContract";
-// import { AFEN_NFT_ABI } from "../../contracts/abis/AfenNFT";
-// import { AfenNft } from "../../contracts/types/AfenNft";
+import useContract from "../../hooks/useContract";
+import { AFEN_NFT_ABI } from "../../contracts/abis/AfenNFT";
+import { AfenNft } from "../../contracts/types/AfenNft";
 import useAuth from "../../hooks/useAuth";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
+import { Message } from "../../components/Message/Message";
 
 interface NFTPageProps {
   nft: NFT;
+  transactions: NFTTransaction[];
 }
 
 // getStaticPaths
@@ -52,45 +54,38 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const { id } = params;
-  const response = await api.post("nft/list", {
-    pageNo: 1,
-    numPerPage: 5000,
-    filter: {
-      isAuction: false,
-      price: "",
-    },
-  });
 
-  const NFTs: NFT[] = response?.data.list || [];
-
-  const nft = NFTs.find((item) => item._id === id);
-
-  if (nft) {
-    try {
-      const transactions = await api.post("/transaction/list", {
+  try {
+    const response = await api.get(`nft/${id}`);
+    const nft: NFT = response.data.nft;
+    if (nft) {
+      const transactionsResponse = await api.post("/transaction/list", {
         pageNo: 1,
         numPerPage: 10,
         filter: {
           _id: nft._id,
         },
       });
-      nft.transactions = transactions?.data.list || [];
-    } catch (err) {}
-  } else {
+
+      let transactions = transactionsResponse?.data.list || [];
+
+      return { props: { nft, transactions }, revalidate: 1 };
+    } else {
+      return { notFound: true };
+    }
+  } catch (err) {
     return { notFound: true };
   }
-
-  return { props: { nft }, revalidate: 1 };
 };
 
-export default function Token({ nft }: NFTPageProps) {
+export default function Token({ nft, transactions }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
 
   const { user, connectWallet } = useUser();
   const { isAuthenticated, toggleLoginDialog } = useAuth();
-  // const { setAbi, contractSigned } = useContract();
+  const { setAbi, contractSigned } = useContract();
   const { notify } = useNotifier();
 
   const tabs = ["Description", "Transaction", "Details"];
@@ -145,14 +140,14 @@ export default function Token({ nft }: NFTPageProps) {
     setLoading(true);
 
     try {
-      // setAbi(AFEN_NFT_ABI);
-      // const nftContract = contractSigned as AfenNft;
-      // await nftContract.setApprovalForAll(user.address, true, {
-      //   from: nft.user._id,
-      // });
-      // await nftContract.buy(nft.user._id, nft.nftId, 10, tokenId, {
-      //   from: user.address,
-      // });
+      setAbi(AFEN_NFT_ABI);
+      const nftContract = contractSigned as AfenNft;
+      await nftContract.setApprovalForAll(user.address, true, {
+        from: nft.user._id,
+      });
+      await nftContract.buy(nft.user._id, nft.nftId, 10, tokenId, {
+        from: user.address,
+      });
 
       // update nft transaction
 
@@ -165,7 +160,9 @@ export default function Token({ nft }: NFTPageProps) {
           text: "View",
         },
       });
-    } catch (e) {
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
       // catch error cases
       // - insufficient funds
       // - wrong network
@@ -207,7 +204,7 @@ export default function Token({ nft }: NFTPageProps) {
               <Title style="text-2xl md:text-3xl font-semibold">
                 {nft?.title}
               </Title>
-              <Link href={`/user/${nft?.wallet}`}>
+              <Link href={`/user/${nft?.user._id}`}>
                 <div className="flex items-end mt-1 cursor-pointer">
                   {/* <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
                     <Image
@@ -217,7 +214,7 @@ export default function Token({ nft }: NFTPageProps) {
                     ></Image>
                   </div> */}
                   <Typography sub bold truncate textWidth="w-40">
-                    {nft?.wallet}
+                    @{nft?.user.name}
                   </Typography>
                 </div>
               </Link>
@@ -268,7 +265,7 @@ export default function Token({ nft }: NFTPageProps) {
               </TabPanel>
               <TabPanel>
                 <div>
-                  {nft?.transactions?.length ? (
+                  {transactions?.length ? (
                     <div></div>
                   ) : (
                     <Typography sub bold size="small">
@@ -298,14 +295,20 @@ export default function Token({ nft }: NFTPageProps) {
             </Tabs>
           </div>
           <div className="mt-auto pt-12 md:pt-4">
+            {/* <Typography bold style="text-blue-500">You own this NFT</Typography>
+            <Message
+              data={{ text: "You own this NFT" }}
+              dismissable={false}
+              style="mt-4"
+            /> */}
             <Button
               block
               size="large"
               onClick={handleClick}
               loading={loading}
-              disabled={disabled}
+              disabled={disabled || !!nft.nftId}
             >
-              Buy
+              {isOwner ? "Sell" : "Buy"}
             </Button>
           </div>
         </div>
