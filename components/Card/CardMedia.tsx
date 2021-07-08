@@ -11,9 +11,10 @@ export default function CardMedia({ src, alt }: CardMediaProps) {
     <div className="h-96 relative bg-gray-200 z-0 overflow-hidden">
       {src && (
         <Image
-          src={src || ""}
+          src={src}
           layout="fill"
           objectFit="cover"
+          // placeholder="blur"
           alt={alt}
         ></Image>
       )}

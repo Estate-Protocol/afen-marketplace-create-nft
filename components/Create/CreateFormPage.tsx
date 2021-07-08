@@ -10,6 +10,7 @@ import Image from "next/image";
 import { CreateFormResponse } from "../../pages/create";
 import Router from "next/router";
 import { UserDetails } from "../User/UserProvider";
+import UserAvatar from "../User/UserAvatar";
 // import MenuDropdown from "@/design-system/MenuDropdown";
 
 export interface CreateFormInput {
@@ -453,37 +454,27 @@ export default class CreateFormPage extends Component<IProps, IState> {
             <div className="mt-3">
               <div>
                 <div className="">
-                  <Title style="text-xl font-semibold truncate overflow-ellipsis overflow-hidden">
+                  <Title style="text-xl font-semibold truncate overflow-ellipsis overflow-hidden mb-1">
                     {this.state?.title || "---"}
                   </Title>
-                  <div>
-                    <div
-                      className="flex items-center mt-1 cursor-pointer"
-                      onClick={() =>
-                        Router.push({ pathname: `/user/${this.props.wallet}` })
-                      }
-                    >
-                      <div className="overflow-hidden rounded-full mr-1">
-                        {/* {this.props.user?.avatar && (
-                          <Image
-                            src={this.props.user?.avatar || "/logo.png"}
-                            layout="fixed"
-                            width="30"
-                            height="30"
-                            objectFit="cover"
-                            className="rounded-full"
-                          ></Image>
-                        )} */}
-                      </div>
-                      <Typography
-                        textWidth="max-w-60"
-                        truncate
-                        style="text-gray-500"
-                      >
-                        {this.props.user?.user?.name}
-                      </Typography>
-                    </div>
-                  </div>
+                  <Flex
+                    center
+                    style="cursor-pointer"
+                    onClick={() =>
+                      Router.push({
+                        pathname: `/user/${this.props.user?.user?._id}`,
+                      })
+                    }
+                  >
+                    <UserAvatar
+                      userId={this.props.user?.user?._id}
+                      image={this.props.user?.user?.avatar}
+                      name={this.props.user?.user?.name}
+                    />
+                    <Typography textWidth="max-w-60" truncate sub>
+                      {this.props.user?.user?.name}
+                    </Typography>
+                  </Flex>
                 </div>
                 <div className="mt-5">
                   <Typography bold sub size="x-small">

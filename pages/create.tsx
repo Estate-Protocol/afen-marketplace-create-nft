@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CreateFormPage, { CreateFormInput } from "../components/Create";
-import { AfenNft } from "../contracts/types";
-import { AFEN_NFT_ABI } from "../contracts/abis/AfenNFT";
+import { Nft } from "../contracts/types";
+import { NFT_ABI } from "../contracts/abis/Nft";
 import { BigNumber, ContractTransaction } from "ethers";
 import { api } from "../utils/axios";
 import useNotifier from "../hooks/useNotifier";
@@ -25,7 +25,7 @@ export const Create: React.FC = () => {
   const { contractSigned, setAbi } = useContract();
   const { user, connectWallet } = useUser();
   const { notify } = useNotifier();
-  const { isAuthenticated, toggleLoginDialog } = useAuth();
+  const { isAuthenticated, toggleLoginDialog, logout } = useAuth();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export const Create: React.FC = () => {
   const token = cookieCutter.get(authCookieName);
 
   React.useEffect(() => {
-    setAbi(AFEN_NFT_ABI);
+    setAbi(NFT_ABI);
   }, []);
 
   const saveNFT = async (data: CreateFormInput): Promise<NFT> => {
@@ -61,6 +61,8 @@ export const Create: React.FC = () => {
         text: "Art Saved",
         status: "success",
       });
+    } else if (response.status === 422) {
+      notify(messages.nftExists);
     }
 
     return response.data.nft;
@@ -70,11 +72,16 @@ export const Create: React.FC = () => {
     nft: NFT,
     afen,
     bnb,
-    contract: AfenNft
+    contract: Nft
   ): Promise<ContractTransaction & { nft_id: string }> => {
     const priceA = BigNumber.from(afen);
     const priceB = BigNumber.from(bnb);
+
     const value = await contract.create_nft(nft.fileHash, priceA, priceB);
+    contract
+      .get_nft_list_size()
+      .then((response) => console.log("finally", response, response.toString()))
+      .catch((err) => console.log(err));
 
     if (value.hash) {
       setTimeout(() => {
@@ -85,8 +92,6 @@ export const Create: React.FC = () => {
       }, 3000);
     }
 
-    console.log(value, "checking nft_id");
-
     // @ts-ignore
     return value;
   };
@@ -95,7 +100,7 @@ export const Create: React.FC = () => {
     nftId: string,
     price,
     selectedCurrency: number,
-    contract: AfenNft
+    contract: Nft
   ): Promise<ContractTransaction> => {
     price = BigNumber.from(price);
     const mint = await contract.mint(nftId, price, selectedCurrency);
@@ -127,7 +132,7 @@ export const Create: React.FC = () => {
 
     try {
       setLoading(true);
-      const nftContract = contractSigned as AfenNft;
+      const nftContract = contractSigned as Nft;
 
       let price = 0;
 
@@ -175,8 +180,12 @@ export const Create: React.FC = () => {
         }
       }
     } catch (err) {
+      console.log(err);
       if (err.code === 4001) {
         notify(messages.requestCancelled);
+      } else if (err?.response?.status === 401) {
+        notify(messages.sessionExpired);
+        logout();
       } else {
         notify(messages.somethingWentWrong);
       }

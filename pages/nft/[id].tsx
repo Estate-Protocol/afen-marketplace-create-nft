@@ -11,15 +11,16 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import moment from "moment";
 import { BsArrowUpRight } from "react-icons/bs";
-import { NFT, NFTTransaction } from "../../types/NFT";
+import { NFT, NFTStatusEnum, NFTTransaction } from "../../types/NFT";
 import Button from "../../components/IO/Button";
 import useUser from "../../hooks/useUser";
 import useContract from "../../hooks/useContract";
-import { AFEN_NFT_ABI } from "../../contracts/abis/AfenNFT";
-import { AfenNft } from "../../contracts/types/AfenNft";
 import useAuth from "../../hooks/useAuth";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
+import { createNFT, mintNFT } from "../../components/NFT/utils";
+import { Nft } from "../../contracts/types";
+import { NFT_ABI } from "../../contracts/abis/Nft";
 
 interface NFTPageProps {
   nft: NFT;
@@ -81,6 +82,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [tabIndex, setTabIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
+  const [minting, setMinting] = React.useState(false);
 
   const { user, connectWallet } = useUser();
   const { isAuthenticated, toggleLoginDialog } = useAuth();
@@ -88,9 +90,13 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const { notify } = useNotifier();
 
   const tabs = ["Description", "Transaction", "Details"];
-  const isOwner = user?.address === nft?.wallet;
+  const isOwner = user?.user?._id === nft?.user?._id;
 
-  const disabled = isOwner;
+  const disabled = isOwner || !nft?.canSell;
+
+  React.useEffect(() => {
+    setAbi(NFT_ABI);
+  }, []);
 
   const getPrice = () => {
     let price = {
@@ -139,8 +145,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     setLoading(true);
 
     try {
-      setAbi(AFEN_NFT_ABI);
-      const nftContract = contractSigned as AfenNft;
+      const nftContract = contractSigned as Nft;
       await nftContract.setApprovalForAll(user.address, true, {
         from: nft.user._id,
       });
@@ -176,6 +181,34 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     setLoading(false);
   };
 
+  const handleMintNFT = async () => {
+    const nftContract = contractSigned as Nft;
+    setMinting(true);
+    const created = await createNFT(nft, nftContract, null, () => {
+      notify(messages.somethingWentWrong);
+    });
+
+    if (created) {
+      const minted = await mintNFT(
+        created.nft_id,
+        getPrice().amount,
+        getPrice().currency === "AFEN" ? 0 : 1,
+        nftContract,
+        null,
+        () => {
+          notify(messages.somethingWentWrong);
+        }
+      );
+
+      if (minted) {
+        // refetch
+        notify(messages.savedChanges);
+      }
+    }
+
+    setMinting(false);
+  };
+
   return isFallback ? (
     <div></div>
   ) : (
@@ -202,20 +235,20 @@ export default function Token({ nft, transactions }: NFTPageProps) {
               <Title style="text-2xl md:text-3xl font-semibold">
                 {nft?.title}
               </Title>
-              <Link href={`/user/${nft?.user._id}`}>
-                <div className="flex items-end mt-1 cursor-pointer">
-                  <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
-                    <Image
-                      src={nft?.user.avatar}
-                      layout="fill"
-                      objectFit="cover"
-                    ></Image>
-                  </div>
-                  <Typography sub bold truncate textWidth="w-40">
-                    {nft?.user.name}
-                  </Typography>
+              {/* <Link href={`/user/${nft?.user._id}`}> */}
+              <div className="flex items-end mt-1 cursor-pointer">
+                <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
+                  <Image
+                    src={nft?.user.avatar}
+                    layout="fill"
+                    objectFit="cover"
+                  ></Image>
                 </div>
-              </Link>
+                <Typography sub bold truncate textWidth="w-40">
+                  {nft?.user.name}
+                </Typography>
+              </div>
+              {/* </Link> */}
             </div>
             <div className="mt-4">
               <Typography sub bold size="small" style="text-right">
@@ -299,15 +332,54 @@ export default function Token({ nft, transactions }: NFTPageProps) {
               dismissable={false}
               style="mt-4"
             /> */}
-            <Button
-              block
-              size="large"
-              onClick={handleClick}
-              loading={loading}
-              disabled={disabled || !!nft.nftId}
-            >
-              {isOwner ? "Sell" : "Buy"}
-            </Button>
+            {isOwner ? (
+              <>
+                {nft?.status === NFTStatusEnum.UPLOADED && (
+                  <Button
+                    block
+                    type="outlined"
+                    size="large"
+                    style="mb-4"
+                    onClick={handleMintNFT}
+                    loading={minting}
+                  >
+                    Mint NFT
+                  </Button>
+                )}
+                <Button
+                  block
+                  type="secondary"
+                  size="large"
+                  style="mb-4"
+                  onClick={handleClick}
+                  loading={loading}
+                  disabled={disabled || !!nft.nftId}
+                >
+                  Disable
+                </Button>
+                <Typography sub size="x-small" style="text-center">
+                  You can list or unlist your NFT on the market
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Button
+                  block
+                  size="large"
+                  onClick={handleClick}
+                  loading={loading}
+                  style="mb-4"
+                  disabled={disabled || !!nft.nftId}
+                >
+                  {isOwner ? "Sell" : "Buy"}
+                </Button>
+                {!nft?.canSell && (
+                  <Typography sub size="x-small" style="text-center">
+                    This NFT is available for sale
+                  </Typography>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

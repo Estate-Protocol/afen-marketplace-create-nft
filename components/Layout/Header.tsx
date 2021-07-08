@@ -7,11 +7,9 @@ import useUser from "../../hooks/useUser";
 import Typography from "../IO/Typography";
 import { GrClose, GrMenu } from "react-icons/gr";
 import Flex from "./Flex";
-import { FcCheckmark } from "react-icons/fc";
-import { copyToClipboard } from "../../utils/misc";
-import { HiDuplicate } from "react-icons/hi";
+import { getInitials } from "../../utils/misc";
 import useAuth from "../../hooks/useAuth";
-import UserDropdownMenu from "../User/UserDropdownMenu";
+import { FiLogOut } from "react-icons/fi";
 
 export default function Header() {
   const node = React.useRef();
@@ -65,34 +63,6 @@ export default function Header() {
             </h1>
           </div>
         </Link>
-        <div className="hidden md:inline-flex items-center ml-auto">
-          <Typography style="mr-8" sub bold>
-            <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
-              Get Started
-            </a>
-          </Typography>
-
-          {isAuthenticated ? (
-            <UserDropdownMenu
-              data={userData}
-              walletAddressIsCopied={copied}
-              onCopyWalletAddress={setCopied}
-              onDisconnectWallet={disconnectWallet}
-            />
-          ) : (
-            <Button type="plain" onClick={() => toggleLoginDialog(true)}>
-              <Typography sub>Login</Typography>
-            </Button>
-          )}
-
-          <Button
-            style="ml-8"
-            type="primary"
-            onClick={() => router.push("/create")}
-          >
-            Create NFT
-          </Button>
-        </div>
 
         <div className="ml-auto md:hidden">
           {mobileMenu ? (
@@ -108,6 +78,48 @@ export default function Header() {
           )}
         </div>
 
+        <div className="md:inline-flex items-center ml-4 md:ml-auto">
+          <Typography style="hidden md:block mr-8" sub bold>
+            <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
+              Get Started
+            </a>
+          </Typography>
+          <Button
+            style="mr-16 hidden md:block"
+            type="primary"
+            onClick={() => router.push("/create")}
+          >
+            Create NFT
+          </Button>
+          {isAuthenticated ? (
+            <>
+              <div
+                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer mr-4"
+                onClick={() => router.push(`/user/${userData.user?._id}`)}
+              >
+                {userData.user?.avatar ? (
+                  <Image src={userData.user.avatar} layout="fill" />
+                ) : (
+                  <Typography bold>
+                    {getInitials(userData.user?.name)}
+                  </Typography>
+                )}
+              </div>
+              <Button type="plain" onClick={() => logout()}>
+                <FiLogOut className="text-2xl" />
+              </Button>
+            </>
+          ) : (
+            <Button
+              style="hidden md:block"
+              type="outlined"
+              onClick={() => toggleLoginDialog(true)}
+            >
+              <Typography sub>Login</Typography>
+            </Button>
+          )}
+        </div>
+
         {mobileMenu && (
           <div className="md:hidden fixed top-14 right-0 w-screen h-screen bg-black dark:bg-afen-blue bg-opacity-40 dark:bg-opacity-60">
             <div ref={node}>
@@ -116,117 +128,35 @@ export default function Header() {
                 style="w-full bg-white dark:bg-rich-black rounded-b-3xl shadow-2xl px-4 z-40 md:px-10 lg:px-16 pt-4 pb-6"
               >
                 <div className="w-full">
-                  <>
-                    {isAuthenticated && (
-                      <Flex center style="mb-3 overflow-hidden w-full">
-                        <div className="mr-3">
-                          <div className="relative h-12 w-12 rounded-full bg-gray-300">
-                            {userData.user?.avatar && (
-                              <Image
-                                src={userData.user?.avatar}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-full"
-                              />
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          <Typography size="x-small" sub style="-mb-1">
-                            Wallet
-                          </Typography>
-                          <div className="inline-flex">
-                            <Typography
-                              textWidth="w-60"
-                              bold
-                              truncate
-                              style="lowercase"
-                              onClick={() =>
-                                router.push(`/user/${userData.address}`)
-                              }
-                            >
-                              {userData.address}
-                            </Typography>
-                            {copied ? (
-                              <FcCheckmark className="ml-2 h-5 w-5" />
-                            ) : (
-                              <HiDuplicate
-                                onClick={() =>
-                                  copyToClipboard(userData.address, setCopied)
-                                }
-                                className={`${
-                                  open ? "" : "text-opacity-70"
-                                } ml-2 h-5 w-5 group-hover:text-opacity-80 transition ease-in-out duration-150 cursor-pointer`}
-                                aria-hidden="true"
-                              />
-                            )}
-                          </div>
-                          {/* <div className="">
-                            <Typography size="x-small" sub style="mt-1 -mb-1">
-                              Balance
-                            </Typography>
-                            <Typography bold sub>
-                              {userData?.balance?.toFixed(3) || 0}{" "}
-                              <span className="text-sm font-normal text-gray-600">
-                                BNB
-                              </span>
-                            </Typography>
-                          </div> */}
-                        </div>
-                      </Flex>
-                    )}
-                    <div className="w-full mb-3">
-                      <Typography>
-                        <a
-                          href="https://link.medium.com/dJY0veBUlgb"
-                          target="_blank"
-                        >
-                          Get Started
-                        </a>
-                      </Typography>
-                      {isAuthenticated && (
-                        <>
-                          <Typography style="mt-3">
-                            <Link href={`/user/` + userData?.address}>
-                              My Collection
-                            </Link>
-                          </Typography>
-                          <Typography
-                            style="mt-3"
-                            onClick={() => disconnectWallet()}
-                          >
-                            Disconnect Wallet
-                          </Typography>
-                        </>
-                      )}
-                    </div>
-                  </>
+                  <Button
+                    style="mb-5"
+                    type="plain"
+                    onClick={() =>
+                      isAuthenticated ? logout() : toggleLoginDialog(true)
+                    }
+                  >
+                    <Typography sub bold size="medium">
+                      {isAuthenticated ? "Logout" : "Login"}
+                    </Typography>
+                  </Button>
+                  <Typography style="mb-5" sub bold size="medium">
+                    <a
+                      href="https://link.medium.com/dJY0veBUlgb"
+                      target="_blank"
+                    >
+                      Get Started
+                    </a>
+                  </Typography>
                 </div>
 
                 <Button
-                  type="primary"
                   block
-                  icon
-                  style="mt-2 w-full"
-                  onClick={() =>
-                    userData.address
-                      ? router.push("/create")
-                      : handleMobileConnection()
-                  }
+                  size="large"
+                  style="ml-8"
+                  type="primary"
+                  onClick={() => router.push("/create")}
                 >
-                  {isAuthenticated ? (
-                    "Create"
-                  ) : (
-                    <>
-                      <Image
-                        src="/metamask.svg"
-                        height="20"
-                        width="20"
-                        layout="fixed"
-                      />
-                      <span className="ml-2">Connect Wallet</span>
-                    </>
-                  )}
+                  Create NFT
                 </Button>
               </Flex>
             </div>

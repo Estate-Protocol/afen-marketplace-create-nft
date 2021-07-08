@@ -44,7 +44,7 @@ export const ContractProvider: React.FC = ({ children }) => {
     // - Everything from Read-Only (except as Signer, not anonymous)
     // - Sending transactions for non-constant functions
     setContractSigned(new ethers.Contract(chainAddress, abi, signer));
-  }, [abi]);
+  }, [abi, signer]);
 
   return (
     <ContractContext.Provider value={{ contract, contractSigned, setAbi }}>

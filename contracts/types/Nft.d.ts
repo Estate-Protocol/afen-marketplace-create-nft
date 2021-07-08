@@ -625,7 +625,7 @@ export class Nft extends BaseContract {
       a_price: BigNumberish,
       b_price: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     get_nft_list_size(overrides?: CallOverrides): Promise<BigNumber>;
 

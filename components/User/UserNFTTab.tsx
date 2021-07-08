@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Loader from "react-loader-spinner";
 import { messages } from "../../constants/messages";
 import useNotifier from "../../hooks/useNotifier";
 import { NFT } from "../../types/NFT";
@@ -60,7 +59,7 @@ export const UserNFTTab: React.FC<UserNFTabProps> = ({ wallet }) => {
           dataLength={data.length}
           next={handleFetchMore}
           hasMore={canFetchMore}
-          loader={<Loader type="Oval" color="#000000" height={20} width={20} />}
+          loader={""}
         >
           <ListingGrid data={data} loading={loading} />
         </InfiniteScroll>

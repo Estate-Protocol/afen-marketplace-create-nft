@@ -51,4 +51,9 @@ export const messages = {
     title: "Session expired",
     text: "Please login",
   },
+  nftExists: {
+    status: NotificationDataStatusEnum.ERROR,
+    title: "NFT exists",
+    text: "An NFT with this image already exist, please use another image.",
+  },
 };

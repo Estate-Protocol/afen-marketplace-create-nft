@@ -1,10 +1,14 @@
 import { NFT } from "../../types/NFT";
 import { api as axios } from "../../utils/axios";
 
+export type FetchNFTsFilter = Partial<
+  Pick<NFT, "afenPrice" | "bnbPrice" | "wallet" | "canSell">
+>;
+
 export const fetchNFTs = async (
   pageNo: number,
   numPerPage?: number,
-  filter?: Partial<Pick<NFT, "afenPrice" | "bnbPrice" | "wallet">>,
+  filter?: FetchNFTsFilter,
   sort?: "DESC" | "ASC"
 ) => {
   const response = await axios.post("/nft/list", {

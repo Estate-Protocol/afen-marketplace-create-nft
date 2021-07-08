@@ -1,12 +1,12 @@
 import React from "react";
 import classNames from "classnames";
+import { BaseComponent } from "../../types/BaseComponent";
 
-interface FlexProps {
+interface FlexProps extends BaseComponent {
   spaceBetween?: boolean;
   start?: boolean;
   wrap?: boolean;
   smAndUp?: boolean;
-  children: any;
   style?: string;
   col?: boolean;
   center?: boolean;
@@ -23,6 +23,7 @@ export default function Flex({
   wrap,
   smAndUp,
   spaceAround,
+  onClick,
 }: FlexProps) {
   return (
     <div
@@ -37,6 +38,7 @@ export default function Flex({
         { "justify-around": spaceAround },
         style
       )}
+      onClick={onClick}
     >
       {children}
     </div>

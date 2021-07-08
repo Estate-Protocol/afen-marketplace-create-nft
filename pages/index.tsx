@@ -1,9 +1,7 @@
 import { useState } from "react";
 import HomePage from "../components/Home";
-import { fetchNFTs } from "../components/Home/apis";
+import { fetchNFTs, FetchNFTsFilter } from "../components/Home/apis";
 import { NFT } from "../types/NFT";
-import { getPlaiceholder } from "plaiceholder";
-import type { InferGetStaticPropsType } from "next";
 
 const NUM_PER_PAGE = 8;
 
@@ -30,12 +28,9 @@ export const Home = ({ nft }) => {
 
   const canFetchMore = data.length !== totalNFTs;
 
-  const handleFetchMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-
+  const fetch = (page: number, filter?: FetchNFTsFilter) => {
     setLoading(true);
-    fetchNFTs(nextPage, NUM_PER_PAGE, null, "DESC")
+    fetchNFTs(page, NUM_PER_PAGE, filter, "DESC")
       .then(({ data: fetchedData }) => {
         setData([...data, ...fetchedData.list]);
         setTotalNFTs(fetchedData.total);
@@ -47,7 +42,15 @@ export const Home = ({ nft }) => {
     setLoading(false);
   };
 
-  const getBlurHash = async () => {};
+  const handleFetchMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetch(nextPage);
+  };
+
+  const handleRefresh = () => {
+    fetch(page);
+  };
 
   return (
     <>
@@ -55,6 +58,7 @@ export const Home = ({ nft }) => {
         data={data}
         loading={loading}
         hasMore={canFetchMore}
+        onRefresh={handleRefresh}
         onFetchMore={handleFetchMore}
       />
     </>

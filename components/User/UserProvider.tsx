@@ -8,6 +8,10 @@ import { IAssetData } from "../../types/WalletConnect";
 import { User as UserData } from "./types/User";
 import { isMobile } from "../../utils/misc";
 import { messages } from "../../constants/messages";
+import useAuth from "../../hooks/useAuth";
+import { authCookieName } from "../Auth/apis/auth";
+import cookieCutter from "cookie-cutter";
+// import detectEthereumProvider from "@metamask/detect-provider";
 
 interface SavedUser {
   address: string;
@@ -67,15 +71,44 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const { notify } = useNotifier();
   const mobile = isMobile();
+  const { logout } = useAuth();
+
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const token =
+    typeof window !== "undefined" ? cookieCutter.get(authCookieName) : null;
 
   React.useEffect(() => {
-    const retrievedUser = localStorage.getItem("user");
-    if (retrievedUser) {
-      const savedUser: SavedUser = JSON.parse(retrievedUser);
+    if (userId) {
+      getUser(userId, token)
+        .then((response) => {
+          setUser(response);
+          setAddress(response.wallet);
+        })
+        .catch((err) => {
+          if (err?.response.status === 401) {
+            logout();
+          }
+        });
+    }
+  }, [userId]);
 
-      if (savedUser.address) {
-        setUser(savedUser.user);
-        setAddress(savedUser.address);
+  React.useEffect(() => {
+    if (userId) {
+      try {
+        // @ts-ignore
+        window.ethereum
+          .request({
+            method: "eth_requestAccounts",
+          })
+          .then(() => {
+            setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
+          })
+          .catch(() => {
+            notify(messages.walletConnectionError);
+          });
+      } catch (err) {
+        notify(messages.walletConnectionError);
       }
     }
   }, []);
@@ -83,10 +116,7 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     if (provider) {
       setSigner(provider.getSigner());
-    } else {
-      if (!mobile) {
-        // getProvider();
-      }
+      getBalance();
     }
   }, [provider]);
 
@@ -101,7 +131,7 @@ export const UserProvider: React.FC = ({ children }) => {
           setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
         });
     } catch (err) {
-      // console.log(err);
+      notify(messages.walletConnectionError);
     }
   };
 
@@ -167,28 +197,28 @@ export const UserProvider: React.FC = ({ children }) => {
     await window.ethereum.request({
       method: "wallet_addEthereumChain",
       params: [
-        {
-          chainId: "0x38",
-          chainName: "BSC Mainnet",
-          nativeCurrency: {
-            name: "BSCMainnet",
-            symbol: "BNB",
-            decimals: 18,
-          },
-          rpcUrls: ["https://bsc-dataseed.binance.org"],
-          blockExplorerUrls: ["https://bscscan.com"],
-        },
         // {
-        //   chainId: "0x61",
-        //   chainName: "BSC Testnet",
+        //   chainId: "0x38",
+        //   chainName: "BSC Mainnet",
         //   nativeCurrency: {
-        //     name: "BSCTestnet",
+        //     name: "BSCMainnet",
         //     symbol: "BNB",
         //     decimals: 18,
         //   },
-        //   rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
-        //   blockExplorerUrls: ["https://testnet.bscscan.com"],
+        //   rpcUrls: ["https://bsc-dataseed.binance.org"],
+        //   blockExplorerUrls: ["https://bscscan.com"],
         // },
+        {
+          chainId: "0x61",
+          chainName: "BSC Testnet",
+          nativeCurrency: {
+            name: "BSCTestnet",
+            symbol: "BNB",
+            decimals: 18,
+          },
+          rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+          blockExplorerUrls: ["https://testnet.bscscan.com"],
+        },
       ],
     });
 
@@ -197,19 +227,7 @@ export const UserProvider: React.FC = ({ children }) => {
     setAccounts(accounts);
     setAddress(address);
 
-    // if (address) {
-    //   const user = await getUser(address);
-    //   setUser(user);
-    //   localStorage.setItem(
-    //     "user",
-    //     JSON.stringify({
-    //       address,
-    //       user,
-    //     })
-    //   );
-    // }
-
-    // return await getBalance();
+    return await getBalance();
   };
 
   const getBalance = async () => {
@@ -239,7 +257,6 @@ export const UserProvider: React.FC = ({ children }) => {
           address,
         },
         setUser: (data: UserData) => {
-          console.log("setting user");
           setUser(data);
         },
         connectWallet,

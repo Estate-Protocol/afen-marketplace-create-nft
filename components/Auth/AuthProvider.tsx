@@ -91,7 +91,6 @@ export const AuthProvider: React.FC = ({ children }) => {
       .then((responseData) => {
         setIsAuthenticated(true);
         localStorage.setItem("userId", responseData.data.user._id);
-        setUser(responseData.data.user);
         return setLoginDialog(false);
       })
       .catch((error: AxiosError) => {

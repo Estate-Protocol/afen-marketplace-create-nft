@@ -1,6 +1,7 @@
 import React from "react";
 import { BaseComponent } from "../../types/BaseComponent";
 import Loader from "react-loader-spinner";
+import classNames from "classnames";
 
 enum ButtonType {
   PRIMARY = "primary",
@@ -60,20 +61,28 @@ export default function Button({
 
     switch (type) {
       case ButtonType.PRIMARY:
-        buttonStyle +=
-          "px-6 py-2 rounded-full bg-afen-yellow text-black focus:outline-none";
+        buttonStyle += classNames(
+          "px-6 py-2 rounded-full bg-afen-yellow text-black focus:outline-none",
+          { "text-gray-500 bg-opacity-80 cursor-default": disabled }
+        );
         break;
       case ButtonType.SECONDARY:
-        buttonStyle +=
-          "px-5 py-2 rounded-full border-2 border-black";
+        buttonStyle += classNames(
+          "px-5 py-2 bg-black text-white rounded-full border-2 border-black",
+          { "text-gray-200 bg-opacity-80 cursor-default": disabled }
+        );
         break;
       case ButtonType.OUTLINED:
-        buttonStyle += "rounded border-2 border-almond bg-none";
+        buttonStyle += classNames(
+          "px-5 py-2 rounded-full border-2 border-black",
+          { "border-gray-500 cursor-default": disabled }
+        );
         break;
       case ButtonType.PLAIN:
-        buttonStyle += `px-0 ${
-          hover ? "hover:text-gray-600 dark:hover:text-gray-300" : ""
-        } `;
+        buttonStyle += classNames(
+          `px-0 ${"hover:text-gray-600 dark:hover:text-gray-300"}`,
+          { "text-gray-400 cursor-default": disabled }
+        );
         break;
       default:
         buttonStyle += "";
@@ -95,11 +104,7 @@ export default function Button({
 
     return `${defaultStyle} ${buttonStyle} ${
       icon || loading ? "inline-flex items-center justify-center w-full" : ""
-    } ${block ? "w-full py-4" : ""} ${
-      disabled
-        ? "text-gray-500 bg-black text-white hover:text-gray-500 cursor-default"
-        : ""
-    }
+    } ${block ? "w-full py-4" : ""}
     ${buttonSize}
     ${style ? style : null}`;
   };
@@ -110,6 +115,7 @@ export default function Button({
       onClick={disabled ? undefined : onClick}
       onFocus={onFocus}
       type={inputType}
+      disabled={disabled || loading}
     >
       {children}
       {loading && (

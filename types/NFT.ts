@@ -19,7 +19,7 @@ export interface NFT extends BaseType {
   thumbnail?: string;
   canSell: string;
   user: User;
-  status: string;
+  status: NFTStatusEnum;
 }
 
 export interface NFTTransaction extends BaseType {
@@ -33,4 +33,10 @@ export interface NFTTransactionEnum {
   BUY: "BUY";
   SELL: "SELL";
   BID: "BID";
+}
+
+export enum NFTStatusEnum {
+  UPLOADED = "Uploaded",
+  CREATED = "Created",
+  MINTED = "Minted",
 }
