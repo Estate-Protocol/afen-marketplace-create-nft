@@ -162,7 +162,6 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       });
     } catch (err) {
       setLoading(false);
-      console.log(err);
       // catch error cases
       // - insufficient funds
       // - wrong network

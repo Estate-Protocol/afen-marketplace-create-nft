@@ -16,7 +16,6 @@ export async function getServerSideProps() {
     })
     .catch((err) => {
       // handle err
-      console.log(err);
       return {
         props: { nft: [] },
       };
@@ -38,21 +37,17 @@ export const Home = ({ nft }) => {
     setLoading(true);
     fetchNFTs(nextPage, NUM_PER_PAGE, null, "DESC")
       .then(({ data: fetchedData }) => {
-
         setData([...data, ...fetchedData.list]);
         setTotalNFTs(fetchedData.total);
       })
-      .catch((err) => {
+      .catch(() => {
         // handle err
-        console.log(err);
       });
 
     setLoading(false);
   };
 
-  const getBlurHash = async () => {
-    
-  }
+  const getBlurHash = async () => {};
 
   return (
     <>

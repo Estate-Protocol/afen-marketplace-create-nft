@@ -161,7 +161,6 @@ export const Create: React.FC = () => {
           text: "An error occured while trying to create NFT, please again later",
         });
       }
-      console.log(err);
     }
     setLoading(false);
   };

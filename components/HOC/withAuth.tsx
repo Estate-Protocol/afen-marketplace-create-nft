@@ -13,8 +13,10 @@ const withAuth = (WrappedComponent) => {
 
       const token = cookieCutter.get("authToken");
 
+      console.log(token);
+
       // If there is no access token we redirect to "/" page.
-      if (!token) {
+      if (!token || token === undefined) {
         Router.replace("/");
         toggleLoginDialog(true);
         return null;

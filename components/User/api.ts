@@ -10,7 +10,12 @@ export async function getUser(address: string, token?: string): Promise<User> {
 }
 
 export async function updateUser(
-  data: Pick<User, "name" | "twitter" | "instagram" | "portfolio"> & {
+  data: Partial<
+    Pick<
+      User,
+      "name" | "twitter" | "instagram" | "portfolio" | "avatar" | "banner"
+    >
+  > & {
     _id: string;
   },
   token?: string

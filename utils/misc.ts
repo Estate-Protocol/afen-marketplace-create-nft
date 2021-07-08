@@ -67,6 +67,5 @@ export const handleAxiosRequestError = (err: AxiosError) => {
     return err;
   } else {
     // Just a stock error, perhaps use notification
-    console.log(err);
   }
 };

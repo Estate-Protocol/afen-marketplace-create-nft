@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FcCheckmark } from "react-icons/fc";
 import { copyToClipboard, parseUrl } from "../../utils/misc";
 import Tabs from "../../components/Tabs/Tabs";
@@ -20,6 +20,8 @@ import UserNFTTab from "../../components/User/UserNFTTab";
 import { GrTwitter, GrInstagram } from "react-icons/gr";
 import { HiOutlineLink } from "react-icons/hi";
 import Image from "next/image";
+import Loader from "react-loader-spinner";
+import { fileUpload } from "../../components/File/api";
 
 interface UserProfilePageProps {
   authUser: User | null;
@@ -37,7 +39,6 @@ export async function getServerSideProps({ params, req }) {
         };
       })
       .catch((err) => {
-        console.log(err);
         return {
           notFound: true,
         };
@@ -52,23 +53,57 @@ export async function getServerSideProps({ params, req }) {
 export const UserProfilePage: React.FC<UserProfilePageProps> = ({
   authUser,
 }) => {
+  const userAvatar = useRef<HTMLInputElement>();
+
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadingdUserAvatar, setUploadingUserAvatar] = useState(false);
+
   const { notify } = useNotifier();
   const { logout } = useAuth();
   const router = useRouter();
 
-  const { _id, name, wallet, twitter, instagram, portfolio } = authUser;
-
-  console.log(wallet);
+  const { _id, name, wallet, twitter, instagram, portfolio, avatar } = authUser;
+  const token = cookieCutter.get(authCookieName);
 
   React.useEffect(() => {}, []);
+
+  const handleUserAvatarClick = () => userAvatar.current.click();
+
+  const uploadFile = async (file: File) => {
+    if (file) {
+      setUploadingUserAvatar(true);
+      fileUpload(file, token)
+        .then((response) => {
+          if (response.data.path) {
+            updateUser({ avatar: response.data.path, _id }, token)
+              .then(() => {
+                notify(messages.savedChanges);
+                router.replace(`/user/${_id}`);
+              })
+              .catch(() => {
+                notify(messages.somethingWentWrong);
+              });
+          }
+          setUploadingUserAvatar(false);
+        })
+        .catch((err) => {
+          if (err?.response?.status) {
+            logout();
+            router.push("/");
+            notify(messages.sessionExpired);
+          } else {
+            notify(messages.somethingWentWrong);
+          }
+          setUploadingUserAvatar(false);
+        });
+    }
+  };
 
   const handleUserUpdate = async (
     data: Pick<User, "name" | "twitter" | "instagram" | "portfolio">
   ) => {
     setLoading(true);
-    const token = cookieCutter.get(authCookieName);
 
     updateUser({ ...data, _id }, token)
       .then(() => {
@@ -77,7 +112,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
       })
       .catch((err) => {
         setLoading(false);
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           logout();
           router.push("/");
           notify(messages.sessionExpired);
@@ -94,9 +129,24 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
         style={{ minHeight: "280px", height: "280px" }}
       ></div>
       <div
-        className="rounded-full h-40 w-40 shadow-md p-2 ring-4 ring-afen-yellow  flex items-center justify-center relative overflow-hidden -mt-20 mb-8 mx-auto bg-gray-100"
+        className="rounded-full h-40 w-40 shadow-md p-2 ring-4 ring-afen-yellow  flex items-center justify-center relative overflow-hidden -mt-20 mb-8 mx-auto bg-gray-100 cursor-pointer"
         style={{ width: "160px", height: "160px", marginTop: "-80px" }}
-      ></div>
+        onClick={handleUserAvatarClick}
+      >
+        {uploadingdUserAvatar && (
+          <Loader type="Oval" color="#000000" height={20} width={20} />
+        )}
+        {avatar && <Image layout="fill" objectFit="cover" src={avatar} />}
+      </div>
+
+      <input
+        className="hidden"
+        ref={userAvatar}
+        accept="*/image"
+        type="file"
+        onChange={(event) => uploadFile(event.target.files[0])}
+      />
+
       <div className="flex justify-center mx-auto text-center">
         <div className="text-center">
           <Typography size="large" bold>
