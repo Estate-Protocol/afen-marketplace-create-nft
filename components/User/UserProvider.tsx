@@ -238,7 +238,10 @@ export const UserProvider: React.FC = ({ children }) => {
           balance,
           address,
         },
-        setUser,
+        setUser: (data: UserData) => {
+          console.log("setting user");
+          setUser(data);
+        },
         connectWallet,
         disconnectWallet,
         isConnectingWallet,

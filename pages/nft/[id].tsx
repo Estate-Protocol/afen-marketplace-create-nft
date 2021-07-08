@@ -20,7 +20,6 @@ import { AfenNft } from "../../contracts/types/AfenNft";
 import useAuth from "../../hooks/useAuth";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
-import { Message } from "../../components/Message/Message";
 
 interface NFTPageProps {
   nft: NFT;
@@ -205,13 +204,13 @@ export default function Token({ nft, transactions }: NFTPageProps) {
               </Title>
               <Link href={`/user/${nft?.user._id}`}>
                 <div className="flex items-end mt-1 cursor-pointer">
-                  {/* <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
+                  <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
                     <Image
-                      src={nft?.userId}
+                      src={nft?.user.avatar}
                       layout="fill"
-                      objectFit="none"
+                      objectFit="cover"
                     ></Image>
-                  </div> */}
+                  </div>
                   <Typography sub bold truncate textWidth="w-40">
                     {nft?.user.name}
                   </Typography>

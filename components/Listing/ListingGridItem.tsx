@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { NFT } from "../../types/NFT";
 import { CardMedia, CardText, CardAvatar } from "../Card";
@@ -40,7 +41,7 @@ export default function HomeListingGridItem({
       }`}
       onClick={onClick}
     >
-      <CardMedia src={""} />
+      <CardMedia src={item.path} />
       <CardText>
         <Typography
           textWidth="w-full"
@@ -49,17 +50,14 @@ export default function HomeListingGridItem({
         >
           {item.title}
         </Typography>
-        <Flex style="mb-3 mt-1">
-          {/* <CardAvatar image={item.} /> */}
-          <Typography
-            truncate
-            textWidth={"w-24"}
-            size="x-small"
-            style="text-gray-500"
-          >
-            {item.wallet}
-          </Typography>
-        </Flex>
+        <Link href={`user/${item.user._id}`}>
+          <Flex style="mb-3 mt-1">
+            <CardAvatar image={item.user.avatar} />
+            <Typography truncate textWidth={"w-24"} style="text-gray-500">
+              {item.user.name}
+            </Typography>
+          </Flex>
+        </Link>
 
         <Typography style="font-semibold">
           {getPrice().amount || 0} {getPrice().currency}

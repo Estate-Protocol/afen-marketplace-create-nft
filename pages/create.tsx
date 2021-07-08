@@ -38,6 +38,8 @@ export const Create: React.FC = () => {
   }, []);
 
   const saveNFT = async (data: CreateFormInput): Promise<NFT> => {
+    const userId = localStorage.getItem("userId");
+
     let formData = new FormData();
     formData.append("file", data.upload);
     formData.append("title", data.title);
@@ -45,7 +47,7 @@ export const Create: React.FC = () => {
     formData.append("description", data.description);
     formData.append("afenPrice", data.afenPrice.toString());
     formData.append("bnbPrice", data.bnbPrice.toString());
-    formData.append("wallet", user?.address);
+    formData.append("userId", userId);
     const response = await api.post("/nft/create/", formData, {
       headers: {
         "Content-type": "multipart/form-data",

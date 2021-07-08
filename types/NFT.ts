@@ -16,7 +16,10 @@ export interface NFT extends BaseType {
   height?: number;
   depth?: number;
   nftId: number;
+  thumbnail?: string;
+  canSell: string;
   user: User;
+  status: string;
 }
 
 export interface NFTTransaction extends BaseType {

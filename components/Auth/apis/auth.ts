@@ -32,7 +32,7 @@ export const logout = async () => {
  * @param {User} data
  * @return {Promise<User> | AxiosError} User
  */
-export const register = async (data: User): Promise<AxiosResponse<User>> => {
+export const register = async (data: User) => {
   const response = await axios.post("/user/register", data);
 
   return response;

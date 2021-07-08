@@ -3,8 +3,10 @@ import React, { useState, useEffect } from "react";
 import useNotifier from "../../hooks/useNotifier";
 import { User } from "../../types/User";
 import { MessageProps } from "../Message/Message";
-import { login, logout, register } from "./apis/auth";
+import { authCookieName, login, logout, register } from "./apis/auth";
 import useUser from "../../hooks/useUser";
+import cookieCutter from "cookie-cutter";
+import { getUser } from "../User/api";
 
 export interface LoginInput extends Pick<User, "email" | "password"> {}
 
@@ -41,7 +43,31 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [message, setMessage] = useState<MessageProps>(null);
 
   const { data: notification } = useNotifier();
-  const { user, setUser, disconnectWallet } = useUser();
+  const { setUser, disconnectWallet } = useUser();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = cookieCutter.get(authCookieName);
+      const userId = localStorage.getItem("userId");
+      if (token && userId) {
+        setIsAuthenticated(true);
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = cookieCutter.get(authCookieName);
+      const userId = localStorage.getItem("userId");
+      getUser(userId, token)
+        .then((response) => setUser(response))
+        .catch((err) => {
+          if (err.response.status === 401) {
+            logout();
+          }
+        });
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (notification) {
@@ -64,6 +90,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     await login(data)
       .then((responseData) => {
         setIsAuthenticated(true);
+        localStorage.setItem("userId", responseData.data.user._id);
         setUser(responseData.data.user);
         return setLoginDialog(false);
       })
@@ -82,6 +109,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setMessage(null);
     await register(data)
       .then((responseData) => {
+        localStorage.setItem("userId", responseData.data.user._id);
         return responseData;
       })
       .catch((error: AxiosError) => {
@@ -97,6 +125,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const logoutUser = () => {
     logout();
+    localStorage.removeItem("userId");
     setUser(null);
     disconnectWallet();
     setIsAuthenticated(false);

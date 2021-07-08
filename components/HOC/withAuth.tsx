@@ -2,6 +2,7 @@
 import { useRouter } from "next/router";
 import cookieCutter from "cookie-cutter";
 import useAuth from "../../hooks/useAuth";
+import { authCookieName } from "../Auth/apis/auth";
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
@@ -11,7 +12,7 @@ const withAuth = (WrappedComponent) => {
     if (typeof window !== "undefined") {
       const router = useRouter();
 
-      const token = cookieCutter.get("authToken");
+      const token = cookieCutter.get(authCookieName);
 
       // If there is no access token we redirect to "/" page.
       if (!token) {

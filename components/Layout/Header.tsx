@@ -11,6 +11,7 @@ import { FcCheckmark } from "react-icons/fc";
 import { copyToClipboard } from "../../utils/misc";
 import { HiDuplicate } from "react-icons/hi";
 import useAuth from "../../hooks/useAuth";
+import UserDropdownMenu from "../User/UserDropdownMenu";
 
 export default function Header() {
   const node = React.useRef();
@@ -71,23 +72,24 @@ export default function Header() {
             </a>
           </Typography>
 
-          {isAuthenticated && (
-            <Typography style="mr-8" sub bold>
-              <Link href={`/user/` + userData?.user?._id}>My Collection</Link>
-            </Typography>
+          {isAuthenticated ? (
+            <UserDropdownMenu
+              data={userData}
+              walletAddressIsCopied={copied}
+              onCopyWalletAddress={setCopied}
+              onDisconnectWallet={disconnectWallet}
+            />
+          ) : (
+            <Button type="plain" onClick={() => toggleLoginDialog(true)}>
+              <Typography sub>Login</Typography>
+            </Button>
           )}
 
           <Button
-            type="plain"
-            onClick={() =>
-              isAuthenticated ? logout() : toggleLoginDialog(true)
-            }
-            style="mr-8"
+            style="ml-8"
+            type="primary"
+            onClick={() => router.push("/create")}
           >
-            <Typography sub>{isAuthenticated ? "Logout" : "Login"}</Typography>
-          </Button>
-
-          <Button type="primary" onClick={() => router.push("/create")}>
             Create NFT
           </Button>
         </div>
