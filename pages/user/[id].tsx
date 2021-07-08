@@ -142,7 +142,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
       <input
         className="hidden"
         ref={userAvatar}
-        accept="*/image"
+        accept="image/*"
         type="file"
         onChange={(event) => uploadFile(event.target.files[0])}
       />

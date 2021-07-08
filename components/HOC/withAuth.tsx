@@ -5,21 +5,22 @@ import useAuth from "../../hooks/useAuth";
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
-    const { toggleLoginDialog } = useAuth();
+    const { toggleLoginDialog, setIsAuthenticated } = useAuth();
 
     // checks whether we are on client / browser or server.
     if (typeof window !== "undefined") {
-      const Router = useRouter();
+      const router = useRouter();
 
       const token = cookieCutter.get("authToken");
 
-      console.log(token);
-
       // If there is no access token we redirect to "/" page.
-      if (!token || token === undefined) {
-        Router.replace("/");
+      if (!token) {
+        router.replace("/");
+        setIsAuthenticated(false);
         toggleLoginDialog(true);
         return null;
+      } else {
+        setIsAuthenticated(true);
       }
 
       // If this is an accessToken we just render the component that was passed with all its props

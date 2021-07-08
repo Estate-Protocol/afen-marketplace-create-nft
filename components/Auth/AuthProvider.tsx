@@ -1,16 +1,10 @@
 import { AxiosError } from "axios";
-import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import useNotifier from "../../hooks/useNotifier";
-// import useUser from "../../hooks/useUser";
 import { User } from "../../types/User";
 import { MessageProps } from "../Message/Message";
-import { authCookieName, login, logout, register } from "./apis/auth";
-import cookieCutter from "cookie-cutter";
+import { login, logout, register } from "./apis/auth";
 import useUser from "../../hooks/useUser";
-import { getUser } from "../User/api";
-
-const protectedRoutes = ["/create", "/user"];
 
 export interface LoginInput extends Pick<User, "email" | "password"> {}
 
@@ -19,6 +13,7 @@ export interface IAuthContext {
   loginDialog: boolean;
   registerDialog: boolean;
   message: MessageProps | null;
+  setIsAuthenticated: (value?: boolean) => void;
   toggleLoginDialog: (value?: boolean) => void;
   toggleRegisterDialog: (value?: boolean) => void;
   login: (data: LoginInput) => Promise<void>;
@@ -31,6 +26,7 @@ export const AuthContext = React.createContext<IAuthContext>({
   loginDialog: false,
   registerDialog: false,
   message: null,
+  setIsAuthenticated: undefined,
   toggleLoginDialog: undefined,
   toggleRegisterDialog: undefined,
   login: undefined,
@@ -44,34 +40,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [registerDialog, setRegisterDialog] = useState<boolean>(false);
   const [message, setMessage] = useState<MessageProps>(null);
 
-  const { route, push: routeTo } = useRouter();
   const { data: notification } = useNotifier();
   const { user, setUser, disconnectWallet } = useUser();
-
-  useEffect(() => {
-    const token = cookieCutter.get(authCookieName);
-    if (token) {
-      if (user?.address) {
-        getUser(user?.address).then((response) => {
-          // setIsAuthenticated(true);
-          setUser(response);
-        });
-      }
-      // setIsAuthenticated(true);
-    }
-  });
-
-  // useEffect(() => {
-  //   // handling protected routes
-  //   if (protectedRoutes.includes(route)) {
-  //     if (!isAuthenticated) {
-  //       // display login dialog
-  //       // TODO: improve by preventing next route rather than routing to home
-  //       routeTo("/");
-  //       setLoginDialog(true);
-  //     }
-  //   }
-  // }, [route]);
 
   useEffect(() => {
     if (notification) {
@@ -139,6 +109,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         loginDialog,
         registerDialog,
         message,
+        setIsAuthenticated,
         toggleLoginDialog: (value) => setLoginDialog(value || !loginDialog),
         toggleRegisterDialog: (value) =>
           setRegisterDialog(value || !registerDialog),

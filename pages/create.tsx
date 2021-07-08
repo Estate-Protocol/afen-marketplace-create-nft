@@ -12,6 +12,8 @@ import { NFT } from "../types/NFT";
 import useAuth from "../hooks/useAuth";
 import withAuth from "../components/HOC/withAuth";
 import { messages } from "../constants/messages";
+import cookieCutter from "cookie-cutter";
+import { authCookieName } from "../components/Auth/apis/auth";
 
 export interface CreateFormResponse {
   title?: string;
@@ -21,13 +23,15 @@ export interface CreateFormResponse {
 
 export const Create: React.FC = () => {
   const { contractSigned, setAbi } = useContract();
-  const { user } = useUser();
+  const { user, connectWallet } = useUser();
   const { notify } = useNotifier();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, toggleLoginDialog } = useAuth();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<CreateFormResponse | null>(null);
+
+  const token = cookieCutter.get(authCookieName);
 
   React.useEffect(() => {
     setAbi(AFEN_NFT_ABI);
@@ -46,6 +50,7 @@ export const Create: React.FC = () => {
       headers: {
         "Content-type": "multipart/form-data",
         type: "formData",
+        Authorization: `JWT ${token}`,
       },
     });
 
@@ -78,6 +83,8 @@ export const Create: React.FC = () => {
       }, 3000);
     }
 
+    console.log(value, "checking nft_id");
+
     // @ts-ignore
     return value;
   };
@@ -102,8 +109,22 @@ export const Create: React.FC = () => {
   };
 
   const handleSubmit = async (data: CreateFormInput) => {
-    setLoading(true);
+    if (!isAuthenticated) {
+      return toggleLoginDialog(true);
+    }
+
+    if (!user.address) {
+      return notify({
+        ...messages.connectWallet,
+        action: {
+          text: "Connect Wallet",
+          onClick: connectWallet,
+        },
+      });
+    }
+
     try {
+      setLoading(true);
       const nftContract = contractSigned as AfenNft;
 
       let price = 0;
@@ -128,38 +149,34 @@ export const Create: React.FC = () => {
 
         if (createdNft.hash && nft) {
           // update nftId
-          // const response = await api.post(
-          //   "/nft/update/",
-          //   // @ts-ignore
-          //   { nftId: value.nft_id },
-          // );
+          const response = await api.post(
+            "/nft/update/",
+            // @ts-ignore
+            { nftId: value.nft_id }
+          );
 
-          // const mintedNFT = await mintNFT(
-          //   createdNft.nft_id,
-          //   price,
-          //   data.currencySelected === "AFEN" ? 0 : 1,
-          //   nftContract
-          // );
+          const mintedNFT = await mintNFT(
+            createdNft.nft_id,
+            price,
+            data.currencySelected === "AFEN" ? 0 : 1,
+            nftContract
+          );
 
-          // if (mintedNFT) {
-          // notify({
-          //   status: "success",
-          //   title: "Done!",
-          //   text: "Your NFT had been minted",
-          // });
-          router.push(`/nft/${nft?._id}`);
-          // }
+          if (mintedNFT) {
+            notify({
+              status: "success",
+              title: "Done!",
+              text: "Your NFT had been minted",
+            });
+            router.push(`/nft/${nft?._id}`);
+          }
         }
       }
     } catch (err) {
       if (err.code === 4001) {
         notify(messages.requestCancelled);
       } else {
-        notify({
-          title: "Sorry",
-          status: "error",
-          text: "An error occured while trying to create NFT, please again later",
-        });
+        notify(messages.somethingWentWrong);
       }
     }
     setLoading(false);
@@ -169,6 +186,7 @@ export const Create: React.FC = () => {
     isAuthenticated && (
       <CreateFormPage
         onSubmit={handleSubmit}
+        user={user}
         wallet={user?.address}
         loading={loading}
         message={message}

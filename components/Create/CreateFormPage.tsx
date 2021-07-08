@@ -9,6 +9,7 @@ import Button from "../IO/Button";
 import Image from "next/image";
 import { CreateFormResponse } from "../../pages/create";
 import Router from "next/router";
+import { UserDetails } from "../User/UserProvider";
 // import MenuDropdown from "@/design-system/MenuDropdown";
 
 export interface CreateFormInput {
@@ -30,6 +31,7 @@ export interface CreateFormInput {
 interface IProps {
   wallet: string;
   loading: boolean;
+  user: UserDetails;
   message?: CreateFormResponse;
   onSubmit: (data: CreateFormInput) => void;
 }
@@ -478,7 +480,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                         truncate
                         style="text-gray-500"
                       >
-                        {this.props.wallet}
+                        {this.props.user?.user?.name}
                       </Typography>
                     </div>
                   </div>
