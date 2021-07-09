@@ -82,10 +82,10 @@ export default function Header() {
           <Typography style="hidden md:block mr-8" sub bold>
             <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
               Get Started
-          </a>
+            </a>
           </Typography>
           <Button
-            style="mr-16 hidden md:block"
+            style="mr-8 hidden md:block"
             type="primary"
             onClick={() => router.push("/create")}
           >
@@ -116,7 +116,7 @@ export default function Header() {
               type="outlined"
               onClick={() => toggleLoginDialog(true)}
             >
-              <Typography sub>Login</Typography>
+              Login
             </Button>
           )}
         </div>
