@@ -18,7 +18,8 @@ export interface NFT extends BaseType {
   nftId: number;
   thumbnail?: string;
   canSell: boolean;
-  user: User;
+  creator: User;
+  owner: User;
   status: NFTStatusEnum;
 }
 

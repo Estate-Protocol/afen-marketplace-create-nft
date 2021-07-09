@@ -44,7 +44,7 @@ export const createNFT = async (
     }
 
     // @ts-ignore
-    return value;
+    return { ...value, nft_id: nftId };
   } catch (err) {
     onError(err);
   }

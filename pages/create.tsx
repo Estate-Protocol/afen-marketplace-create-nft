@@ -48,7 +48,7 @@ export const Create: React.FC = () => {
     formData.append("description", data.description);
     formData.append("afenPrice", data.afenPrice.toString());
     formData.append("bnbPrice", data.bnbPrice.toString());
-    formData.append("userId", userId);
+    formData.append("creatorId", userId);
 
     try {
       const response = await api.post("/nft/create/", formData, {

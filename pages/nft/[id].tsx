@@ -101,8 +101,10 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const { notify } = useNotifier();
 
   const tabs = ["Description", "Transactions", "Details"];
-  const isOwner = isAuthenticated && user?.user?._id === nft?.user?._id;
+  const isOwner = isAuthenticated && user?.user?._id === nft?.owner?._id;
   const canSell = nft?.status === NFTStatusEnum.MINTED && nft?.canSell;
+
+  console.log(user?.user?._id, nft?.owner?._id);
 
   React.useEffect(() => {
     setAbi(NFT_ABI);
@@ -160,9 +162,9 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     try {
       const nftContract = contractSigned as Nft;
       await nftContract.setApprovalForAll(user.address, true, {
-        from: nft.user._id,
+        from: nft.owner.wallet,
       });
-      await nftContract.buy(nft.user._id, nft.nftId, 10, tokenId, {
+      await nftContract.buy(nft.owner.wallet, nft.nftId, 10, tokenId, {
         from: user.address,
       });
 
@@ -319,7 +321,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     )
       .then(() => {
         notify(messages.savedChanges);
-        reloadPage(nft?._id);
+        // reloadPage(nft?._id);
       })
       .catch((err) => {
         if (err?.response?.status === 401) {
@@ -357,7 +359,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     )
       .then(() => {
         notify(messages.savedChanges);
-        reloadPage(nft?._id);
+        // reloadPage(nft?._id);
       })
       .catch((err) => {
         if (err?.response?.status === 401) {
@@ -398,9 +400,12 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                 </Title>
 
                 <div className="flex items-end mt-1">
-                  <UserAvatar image={nft?.user.avatar} name={nft?.user.name} />
+                  <UserAvatar
+                    image={nft?.creator?.avatar}
+                    name={nft?.creator?.name}
+                  />
                   <Typography sub bold truncate textWidth="w-40">
-                    {nft?.user.name}
+                    {nft?.creator.name}
                   </Typography>
                 </div>
               </div>
@@ -462,21 +467,51 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                   </div>
                 </TabPanel>
                 <TabPanel>
-                  <div className="my-5 md:h-64 md:overflow-y-scroll">
-                    <Typography size="x-small" sub bold>
-                      Last update
-                    </Typography>
-                    <Typography>
-                      {moment(nft.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}
-                    </Typography>
-                  </div>
-                  <div>
-                    <Typography size="x-small" sub bold>
-                      Created
-                    </Typography>
-                    <Typography>
-                      {moment(nft.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
-                    </Typography>
+                  <div className="my-5 md:overflow-y-scroll">
+                    <div className="mb-4">
+                      <Typography size="x-small" style="mb-1" sub bold>
+                        Owner
+                      </Typography>
+                      <Flex>
+                        <UserAvatar
+                          image={nft?.owner.avatar}
+                          name={nft?.owner.name}
+                        />
+                        <Typography>{nft?.owner.name}</Typography>
+                      </Flex>
+                    </div>
+                    <div className="mb-4">
+                      <Typography size="x-small" style="mb-1" sub bold>
+                        Creator
+                      </Typography>
+                      <Flex>
+                        <UserAvatar
+                          image={nft?.creator.avatar}
+                          name={nft?.creator.name}
+                        />
+                        <Typography>{nft?.creator.name}</Typography>
+                      </Flex>
+                    </div>
+                    <div className="mb-4">
+                      <Typography size="x-small" sub bold>
+                        Last update
+                      </Typography>
+                      <Typography>
+                        {moment(nft.updatedAt).format(
+                          "MMMM Do YYYY, h:mm:ss a"
+                        )}
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography size="x-small" sub bold>
+                        Created
+                      </Typography>
+                      <Typography>
+                        {moment(nft.createdAt).format(
+                          "MMMM Do YYYY, h:mm:ss a"
+                        )}
+                      </Typography>
+                    </div>
                   </div>
                 </TabPanel>
               </Tabs>
@@ -516,9 +551,9 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                     >
                       Sell
                     </Button>
-                    <Typography sub size="x-small" style="text-center">
+                    {/* <Typography sub size="x-small" style="text-center">
                       This would make your NFT available on the Marketplace
-                    </Typography>
+                    </Typography> */}
                   </>
                 )}
                 {nft?.status === NFTStatusEnum.MINTED && nft?.canSell ? (
