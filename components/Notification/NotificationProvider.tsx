@@ -8,8 +8,8 @@ export enum NotificationDataStatusEnum {
 }
 export interface NotificationData {
   status?: "error" | "success" | "info" | null;
-  title?: string;
-  text: string;
+  title?: React.ReactNode | string;
+  text: React.ReactNode | string;
   action?: {
     text: string;
     buttonType?: ButtonType;

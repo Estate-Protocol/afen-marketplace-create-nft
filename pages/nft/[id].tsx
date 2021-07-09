@@ -207,11 +207,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     });
   };
 
-  const handleSuccess = (
-    response: ContractTransaction,
-    type: NFTTransactionEnum,
-    status: NFTStatusEnum
-  ) => {
+  const handleSuccess = (type: NFTTransactionEnum, status: NFTStatusEnum) => {
     createTransaction(
       {
         userId: user?.user._id,
@@ -256,8 +252,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       getPrice().amount,
       getPrice().currency === "AFEN" ? 0 : 1,
       nftContract,
-      (response) =>
-        handleSuccess(response, NFTTransactionEnum.MINT, NFTStatusEnum.MINTED),
+      () => handleSuccess(NFTTransactionEnum.MINT, NFTStatusEnum.MINTED),
       () => {
         notify(messages.somethingWentWrong);
       }
@@ -288,17 +283,83 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       nft,
       nftContract,
       (response) =>
-        handleSuccess(
-          response,
-          NFTTransactionEnum.CREATE,
-          NFTStatusEnum.CREATED
-        ),
+        handleSuccess(NFTTransactionEnum.CREATE, NFTStatusEnum.CREATED),
       () => {
         notify(messages.somethingWentWrong);
       }
     );
 
     setCreating(false);
+  };
+
+  const onRemoveFromMarketplace = () => {
+    userCheck();
+    notify({
+      status: "error",
+      title: `Remove "${nft?.title}"`,
+      text: "You are about to remove this NFT from Marketplace, click Continue to proceed",
+      action: {
+        buttonType: ButtonType.DELETE,
+        text: "Continue",
+        onClick: () => handleRemoveFromMarketplace(),
+      },
+    });
+  };
+
+  const handleRemoveFromMarketplace = () => {
+    setLoading(true);
+    updateNFT(
+      {
+        _id: nft?._id,
+        nftId: nft?.nftId,
+        canSell: false,
+      },
+      authToken
+    )
+      .then(() => notify(messages.savedChanges))
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          logout();
+          notify(messages.sessionExpired);
+        }
+        notify(messages.somethingWentWrong);
+      });
+    setLoading(false);
+  };
+
+  const onAddToMarketplace = () => {
+    userCheck();
+    notify({
+      status: "info",
+      title: `Add "${nft?.title}"`,
+      text: "You are about to add this NFT from Marketplace, click Continue to proceed",
+      action: {
+        buttonType: ButtonType.PRIMARY,
+        text: "Continue",
+        onClick: () => handleAddToMarketplace(),
+      },
+    });
+  };
+
+  const handleAddToMarketplace = () => {
+    setLoading(true);
+    updateNFT(
+      {
+        _id: nft?._id,
+        nftId: nft?.nftId,
+        canSell: true,
+      },
+      authToken
+    )
+      .then(() => notify(messages.savedChanges))
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          logout();
+          notify(messages.sessionExpired);
+        }
+        notify(messages.somethingWentWrong);
+      });
+    setLoading(false);
   };
 
   return isFallback ? (
@@ -453,14 +514,14 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                     </Typography>
                   </>
                 )}
-                {nft?.status === NFTStatusEnum.MINTED && nft?.canSell && (
+                {nft?.status === NFTStatusEnum.MINTED && nft?.canSell ? (
                   <>
                     <Button
                       block
                       type="delete"
                       size="large"
                       style="mb-4"
-                      onClick={onCreateNFT}
+                      onClick={onRemoveFromMarketplace}
                       loading={loading}
                       disabled={!canSell}
                     >
@@ -468,6 +529,21 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                     </Button>
                     <Typography sub size="x-small" style="text-center">
                       This would take your NFT off the Marketplace
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      block
+                      size="large"
+                      style="mb-4"
+                      onClick={onAddToMarketplace}
+                      loading={loading}
+                    >
+                      Add to Marketplace
+                    </Button>
+                    <Typography sub size="x-small" style="text-center">
+                      This would list your NFT on the Marketplace
                     </Typography>
                   </>
                 )}

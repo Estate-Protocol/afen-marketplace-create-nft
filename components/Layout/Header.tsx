@@ -67,12 +67,12 @@ export default function Header() {
         <div className="ml-auto md:hidden">
           {mobileMenu ? (
             <GrClose
-              className="text-xl fill-current text-dark dark:text-white"
+              className="text-2xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(false)}
             />
           ) : (
             <GrMenu
-              className="text-xl fill-current text-dark dark:text-white"
+              className="text-2xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(true)}
             />
           )}
@@ -93,9 +93,9 @@ export default function Header() {
           </Button>
 
           {isAuthenticated ? (
-            <>
+            <div className="inline-flex items-center">
               <div
-                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer mr-4 ml-4 md:ml-0"
+                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer ml-4 md:ml-0"
                 onClick={() => router.push(`/user/${userData.user?._id}`)}
               >
                 {userData.user?.avatar ? (
@@ -106,10 +106,10 @@ export default function Header() {
                   </Typography>
                 )}
               </div>
-              <Button type="plain" onClick={() => logout()}>
+              <Button type="plain" style="ml-4" onClick={() => logout()}>
                 <FiLogOut className="text-2xl" />
               </Button>
-            </>
+            </div>
           ) : (
             <Button
               style="hidden md:block"

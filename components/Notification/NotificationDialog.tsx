@@ -29,10 +29,12 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
         >
           {data.title}
         </Title>
-        <IoCloseSharp
-          className="text-3xl text-gray-400 cursor-pointer"
-          onClick={() => close()}
-        />
+        <div>
+          <IoCloseSharp
+            className="text-3xl text-gray-400 cursor-pointer"
+            onClick={() => close()}
+          />
+        </div>
       </Flex>
       <Typography sub bold style="mb-2">
         {data.text}

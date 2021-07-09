@@ -7,18 +7,15 @@ export const mintNFT = async (
   price: number,
   selectedCurrency: number,
   contract: Nft,
-  onCompleted?: (mint: ContractTransaction) => void,
+  onCompleted?: () => void,
   onError?: (err: any) => void
-): Promise<ContractTransaction> => {
+): Promise<void> => {
   try {
     const bigNumberPrice = BigNumber.from(price);
-    const mint = await contract.mint(nftId, bigNumberPrice, selectedCurrency);
 
-    if (mint.hash) {
-      onCompleted(mint);
-    }
+    await contract.mint(nftId, bigNumberPrice, selectedCurrency);
 
-    return mint;
+    onCompleted();
   } catch (err) {
     onError(err);
   }
