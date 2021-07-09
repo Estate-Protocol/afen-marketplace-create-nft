@@ -54,7 +54,7 @@ export default function HomeListingGridItem({
         {/* <Link href={`user/${item.user._id}`}> */}
         <Flex style="mb-3 mt-1">
           <UserAvatar image={item.user?.avatar} name={item.user?.name} />
-          <Typography truncate textWidth={"w-24"} sub>
+          <Typography truncate textWidth="w-full" sub>
             {item.user.name}
           </Typography>
         </Flex>

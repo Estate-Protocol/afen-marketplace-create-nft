@@ -23,7 +23,7 @@ import useContract from "../../hooks/useContract";
 import useAuth from "../../hooks/useAuth";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
-import { mintNFT } from "../../components/NFT/utils";
+import { createNFT, mintNFT } from "../../components/NFT/utils";
 import { Nft } from "../../contracts/types";
 import { NFT_ABI } from "../../contracts/abis/Nft";
 import UserAvatar from "../../components/User/UserAvatar";
@@ -92,6 +92,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const [tabIndex, setTabIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [minting, setMinting] = React.useState(false);
+  const [creating, setCreating] = React.useState(false);
 
   const { user, connectWallet } = useUser();
   const { authToken, isAuthenticated, toggleLoginDialog } = useAuth();
@@ -197,7 +198,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     notify({
       status: "info",
       title: `Sell "${nft?.title}"`,
-      text: "You're about to list this NFT for sale on the Marketplace, click Continue to proceed",
+      text: "You are about to list this NFT for sale on the Marketplace, click Continue to proceed",
       action: {
         buttonType: ButtonType.PRIMARY,
         text: "Continue",
@@ -206,11 +207,15 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     });
   };
 
-  const handleMintSuccess = (mint: ContractTransaction) => {
+  const handleSuccess = (
+    response: ContractTransaction,
+    type: NFTTransactionEnum,
+    status: NFTStatusEnum
+  ) => {
     createTransaction(
       {
         userId: user?.user._id,
-        type: NFTTransactionEnum.MINT,
+        type,
         nftId: nft?._id,
         price: getPrice().amount,
       },
@@ -225,12 +230,15 @@ export default function Token({ nft, transactions }: NFTPageProps) {
         notify(messages.somethingWentWrong);
       });
 
-    updateNFT({
-      _id: nft?._id,
-      nftId: nft?.nftId,
-      canSell: true,
-      status: NFTStatusEnum.MINTED,
-    }).catch((err) => {
+    updateNFT(
+      {
+        _id: nft?._id,
+        nftId: nft?.nftId,
+        canSell: true,
+        status,
+      },
+      authToken
+    ).catch((err) => {
       if (err?.response?.status === 401) {
         logout();
         notify(messages.sessionExpired);
@@ -248,13 +256,49 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       getPrice().amount,
       getPrice().currency === "AFEN" ? 0 : 1,
       nftContract,
-      handleMintSuccess,
+      (response) =>
+        handleSuccess(response, NFTTransactionEnum.MINT, NFTStatusEnum.MINTED),
       () => {
         notify(messages.somethingWentWrong);
       }
     );
 
     setMinting(false);
+  };
+
+  const onCreateNFT = () => {
+    userCheck();
+    notify({
+      status: "info",
+      title: `Create "${nft?.title}"`,
+      text: "You are about to create this NFT, click Continue to proceed",
+      action: {
+        buttonType: ButtonType.PRIMARY,
+        text: "Continue",
+        onClick: () => handleCreateNFT(),
+      },
+    });
+  };
+
+  const handleCreateNFT = async () => {
+    const nftContract = contractSigned as Nft;
+    setCreating(true);
+
+    await createNFT(
+      nft,
+      nftContract,
+      (response) =>
+        handleSuccess(
+          response,
+          NFTTransactionEnum.CREATE,
+          NFTStatusEnum.CREATED
+        ),
+      () => {
+        notify(messages.somethingWentWrong);
+      }
+    );
+
+    setCreating(false);
   };
 
   return isFallback ? (
@@ -374,6 +418,24 @@ export default function Token({ nft, transactions }: NFTPageProps) {
           <div className="pt-10 md:pt-4 md:absolute md:bottom-0 bg-white w-full md:border-t-2 px-4 md:px-10 lg:px-16 mt-10 md:mt-auto">
             {isOwner ? (
               <>
+                {nft?.status === NFTStatusEnum.UPLOADED && (
+                  <>
+                    <Button
+                      block
+                      type="outlined"
+                      size="large"
+                      style="mb-4"
+                      onClick={onCreateNFT}
+                      loading={creating}
+                    >
+                      Create NFT
+                    </Button>
+                    <Typography sub size="x-small" style="text-center">
+                      You are seeing this because creating NFT for this was not
+                      successful, try again
+                    </Typography>
+                  </>
+                )}
                 {nft?.status === NFTStatusEnum.CREATED && (
                   <>
                     <Button
@@ -398,7 +460,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                       type="delete"
                       size="large"
                       style="mb-4"
-                      onClick={onBuyNFT}
+                      onClick={onCreateNFT}
                       loading={loading}
                       disabled={!canSell}
                     >
