@@ -321,7 +321,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     )
       .then(() => {
         notify(messages.savedChanges);
-        // reloadPage(nft?._id);
+        reloadPage(nft?._id);
       })
       .catch((err) => {
         if (err?.response?.status === 401) {
@@ -359,7 +359,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
     )
       .then(() => {
         notify(messages.savedChanges);
-        // reloadPage(nft?._id);
+        reloadPage(nft?._id);
       })
       .catch((err) => {
         if (err?.response?.status === 401) {
@@ -551,12 +551,12 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                     >
                       Sell
                     </Button>
-                    {/* <Typography sub size="x-small" style="text-center">
+                    <Typography sub size="x-small" style="text-center">
                       This would make your NFT available on the Marketplace
-                    </Typography> */}
+                    </Typography>
                   </>
                 )}
-                {nft?.status === NFTStatusEnum.MINTED && nft?.canSell ? (
+                {nft?.status === NFTStatusEnum.MINTED && nft?.canSell && (
                   <>
                     <Button
                       block
@@ -573,7 +573,8 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                       This would take your NFT off the Marketplace
                     </Typography>
                   </>
-                ) : (
+                )}
+                {nft?.status === NFTStatusEnum.MINTED && !nft?.canSell && (
                   <>
                     <Button
                       block
