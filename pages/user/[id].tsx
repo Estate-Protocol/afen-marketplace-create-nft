@@ -117,6 +117,12 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
           logout();
           router.push("/");
           notify(messages.sessionExpired);
+        } else if (err?.response?.status === 400) {
+          notify({
+            status: "error",
+            title: "Check your profile",
+            text: err.response.data?.message,
+          });
         } else {
           notify(messages.somethingWentWrong);
         }
