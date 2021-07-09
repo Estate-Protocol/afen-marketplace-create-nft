@@ -22,6 +22,7 @@ import { HiOutlineLink } from "react-icons/hi";
 import Image from "next/image";
 import Loader from "react-loader-spinner";
 import { fileUpload } from "../../components/File/api";
+import { reloadPage } from "../../utils";
 
 interface UserProfilePageProps {
   authUser: User | null;
@@ -104,10 +105,10 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
     data: Pick<User, "name" | "twitter" | "instagram" | "portfolio">
   ) => {
     setLoading(true);
-
     updateUser({ ...data, _id }, token)
       .then(() => {
         setLoading(false);
+        reloadPage();
         notify(messages.savedChanges);
       })
       .catch((err) => {

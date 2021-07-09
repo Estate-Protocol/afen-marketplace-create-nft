@@ -30,6 +30,7 @@ import UserAvatar from "../../components/User/UserAvatar";
 import { ContractTransaction } from "ethers";
 import { createTransaction, updateNFT } from "../../components/NFT/apis";
 import { logout } from "../../components/Auth/apis/auth";
+import { reloadPage } from "../../utils";
 
 interface NFTPageProps {
   nft: NFT;
@@ -316,7 +317,10 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       },
       authToken
     )
-      .then(() => notify(messages.savedChanges))
+      .then(() => {
+        notify(messages.savedChanges);
+        reloadPage(nft?._id);
+      })
       .catch((err) => {
         if (err?.response?.status === 401) {
           logout();
@@ -351,7 +355,10 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       },
       authToken
     )
-      .then(() => notify(messages.savedChanges))
+      .then(() => {
+        notify(messages.savedChanges);
+        reloadPage(nft?._id);
+      })
       .catch((err) => {
         if (err?.response?.status === 401) {
           logout();
