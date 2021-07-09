@@ -78,11 +78,11 @@ export default function Header() {
           )}
         </div>
 
-        <div className="md:inline-flex items-center ml-4 md:ml-auto">
+        <div className="md:inline-flex items-center md:ml-auto">
           <Typography style="hidden md:block mr-8" sub bold>
             <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
               Get Started
-            </a>
+          </a>
           </Typography>
           <Button
             style="mr-16 hidden md:block"
@@ -91,10 +91,11 @@ export default function Header() {
           >
             Create NFT
           </Button>
+
           {isAuthenticated ? (
             <>
               <div
-                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer mr-4"
+                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer mr-4 ml-4 md:ml-0"
                 onClick={() => router.push(`/user/${userData.user?._id}`)}
               >
                 {userData.user?.avatar ? (

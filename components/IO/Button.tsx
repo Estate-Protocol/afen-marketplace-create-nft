@@ -3,7 +3,7 @@ import { BaseComponent } from "../../types/BaseComponent";
 import Loader from "react-loader-spinner";
 import classNames from "classnames";
 
-enum ButtonType {
+export enum ButtonType {
   PRIMARY = "primary",
   SECONDARY = "secondary",
   OUTLINED = "outlined",

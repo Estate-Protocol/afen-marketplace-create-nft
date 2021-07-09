@@ -41,7 +41,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
         <Button
           block
           style="mt-3"
-          type="outlined"
+          type={data.action.buttonType || "outlined"}
           onClick={() => {
             data.action.onClick();
             close();

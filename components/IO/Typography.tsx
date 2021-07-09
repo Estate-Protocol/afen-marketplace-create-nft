@@ -7,6 +7,8 @@ interface TypographyProps extends BaseComponent {
   bold?: boolean;
   truncate?: boolean;
   textWidth?: string;
+  readMore?: boolean;
+  readMoreAt?: number;
 }
 
 export default function Typography({
@@ -17,8 +19,12 @@ export default function Typography({
   size = "default",
   truncate,
   textWidth,
+  readMore,
+  readMoreAt,
   onClick,
 }: TypographyProps) {
+  const [isReadMore, setIsReadMore] = React.useState(readMore);
+
   const getTypographySize = () => {
     switch (size) {
       case "large":
@@ -53,7 +59,19 @@ export default function Typography({
       style={truncate && { lineClamp: 3, boxOrient: "vertical" }}
       onClick={onClick}
     >
-      {children}
+      {isReadMore && typeof children === "string" ? (
+        <>
+          {children.slice(0, readMoreAt || 150)}
+          <span
+            onClick={() => setIsReadMore(!isReadMore)}
+            className="font-bold cursor-pointer"
+          >
+            {isReadMore ? "...read more" : " show less"}
+          </span>
+        </>
+      ) : (
+        children
+      )}
     </p>
   );
 }

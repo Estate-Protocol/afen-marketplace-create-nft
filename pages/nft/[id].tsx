@@ -17,7 +17,7 @@ import {
   NFTTransaction,
   NFTTransactionEnum,
 } from "../../types/NFT";
-import Button from "../../components/IO/Button";
+import Button, { ButtonType } from "../../components/IO/Button";
 import useUser from "../../hooks/useUser";
 import useContract from "../../hooks/useContract";
 import useAuth from "../../hooks/useAuth";
@@ -98,7 +98,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const { setAbi, contractSigned } = useContract();
   const { notify } = useNotifier();
 
-  const tabs = ["Description", "Transaction", "Details"];
+  const tabs = ["Description", "Transactions", "Details"];
   const isOwner = isAuthenticated && user?.user?._id === nft?.user?._id;
   const canSell = nft?.status === NFTStatusEnum.MINTED && nft?.canSell;
 
@@ -195,11 +195,13 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const onMintNFT = () => {
     // userCheck();
     notify({
+      status: "info",
       title: `Sell "${nft?.title}"`,
       text: "You're about to list this NFT for sale on the Marketplace, click Continue to proceed",
       action: {
-        onClick: () => handleMintNFT(),
+        buttonType: ButtonType.PRIMARY,
         text: "Continue",
+        onClick: () => handleMintNFT(),
       },
     });
   };
@@ -275,103 +277,101 @@ export default function Token({ nft, transactions }: NFTPageProps) {
             </div>
           </div>
         </div>
-        <div className="relative w-full mb-10 md:w-2/5 lg:w-2/6 sm:mt-16 md:mt-32 flex flex-col px-4 md:px-10 lg:px-16 mx-auto overflow-hidden">
-          <Flex spaceBetween wrap style="items-start mb-4 flex-nowrap w-full">
-            <div>
-              <Title style="text-2xl md:text-3xl font-semibold">
-                {nft?.title}
-              </Title>
-              {/* <Link href={`/user/${nft?.user._id}`}> */}
-              <div className="flex items-end mt-1 cursor-pointer">
-                <UserAvatar image={nft?.user.avatar} name={nft?.user.name} />
-                <Typography sub bold truncate textWidth="w-40">
-                  {nft?.user.name}
-                </Typography>
+        <div className="relative w-full mb-10 md:w-2/5 lg:w-2/6 sm:mt-16 md:mt-32 flex flex-col mx-auto overflow-hidden">
+          <div className="px-4 md:px-10 lg:px-16">
+            <Flex spaceBetween wrap start style="mb-4 w-full">
+              <div className="mb-2">
+                <Title style="text-2xl md:text-3xl font-semibold mb-1">
+                  {nft?.title}
+                </Title>
+
+                <div className="flex items-end mt-1">
+                  <UserAvatar image={nft?.user.avatar} name={nft?.user.name} />
+                  <Typography sub bold truncate textWidth="w-40">
+                    {nft?.user.name}
+                  </Typography>
+                </div>
               </div>
-              {/* </Link> */}
-            </div>
-            <div className="mt-4">
-              <Typography sub bold size="small" style="text-right">
+            </Flex>
+            <div>
+              <Typography sub bold size="small">
                 Price
               </Typography>
-              <Typography style="text-xl md:text-3xl text-right" bold>
+              <Typography style="text-xl md:text-3xl" bold>
                 {getPrice().amount || 0} {getPrice().currency}
               </Typography>
             </div>
-          </Flex>
-          <div className="mt-3">
-            <Tabs
-              selectedIndex={tabIndex}
-              onSelect={(index) => setTabIndex(index)}
-            >
-              <TabList>
-                {tabs.map((tab, tabListIndex) => (
-                  <Tab
-                    key={tabListIndex}
-                    className={`list-none inline-block pr-5 pt-2 mr-2 rounded-t-lg cursor-pointer pb-1 transition-colors duration-75 ease-linear text-sm focus:outline-none font-bold ${
-                      tabListIndex === tabIndex
-                        ? "bg-afen-yellow"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {tab}
-                  </Tab>
-                ))}
-              </TabList>
+            <div className="mt-3">
+              <Tabs
+                selectedIndex={tabIndex}
+                onSelect={(index) => setTabIndex(index)}
+              >
+                <TabList>
+                  {tabs.map((tab, tabListIndex) => (
+                    <Tab
+                      key={tabListIndex}
+                      className={`list-none inline-block pr-5 pt-2 mr-2 rounded-t-lg cursor-pointer pb-1 transition-colors duration-75 ease-linear text-sm focus:outline-none font-bold ${
+                        tabListIndex === tabIndex
+                          ? "bg-afen-yellow"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {tab}
+                    </Tab>
+                  ))}
+                </TabList>
 
-              <TabPanel>
-                <Typography>{nft.description}</Typography>
-                <div className="mt-8">
-                  <a
-                    href={`https://ipfs.io/ipfs/${nft.fileHash}`}
-                    target="_blank"
-                    className="underline pb-2"
-                  >
-                    <Typography bold style="inline-flex">
-                      View on IPFS
-                      <BsArrowUpRight className="ml-2 text-xl" />
+                <TabPanel>
+                  <div className="md:h-64 md:overflow-y-scroll">
+                    <Typography readMore>{nft.description}</Typography>
+                    <div className="mt-8">
+                      <a
+                        href={`https://ipfs.io/ipfs/${nft.fileHash}`}
+                        target="_blank"
+                        className="underline pb-2"
+                      >
+                        <Typography bold style="inline-flex">
+                          View on IPFS
+                          <BsArrowUpRight className="ml-2 text-xl" />
+                        </Typography>
+                      </a>
+                    </div>
+                  </div>
+                </TabPanel>
+                <TabPanel>
+                  <div className="md:h-64 md:overflow-y-scroll">
+                    {transactions?.length ? (
+                      <div></div>
+                    ) : (
+                      <Typography sub bold size="small">
+                        No transactions yet
+                      </Typography>
+                    )}
+                  </div>
+                </TabPanel>
+                <TabPanel>
+                  <div className="my-5 md:h-64 md:overflow-y-scroll">
+                    <Typography size="x-small" sub bold>
+                      Last update
                     </Typography>
-                  </a>
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <div>
-                  {transactions?.length ? (
-                    <div></div>
-                  ) : (
-                    <Typography sub bold size="small">
-                      No transactions yet
+                    <Typography>
+                      {moment(nft.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}
                     </Typography>
-                  )}
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <div className="my-5">
-                  <Typography size="x-small" sub bold>
-                    Last update
-                  </Typography>
-                  <Typography>
-                    {moment(nft.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography size="x-small" sub bold>
-                    Created
-                  </Typography>
-                  <Typography>
-                    {moment(nft.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
-                  </Typography>
-                </div>
-              </TabPanel>
-            </Tabs>
+                  </div>
+                  <div>
+                    <Typography size="x-small" sub bold>
+                      Created
+                    </Typography>
+                    <Typography>
+                      {moment(nft.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+                    </Typography>
+                  </div>
+                </TabPanel>
+              </Tabs>
+            </div>
           </div>
-          <div className="mt-auto pt-12 md:pt-4">
-            {/* <Typography bold style="text-blue-500">You own this NFT</Typography>
-            <Message
-              data={{ text: "You own this NFT" }}
-              dismissable={false}
-              style="mt-4"
-            /> */}
+
+          <div className="pt-10 md:pt-4 md:absolute md:bottom-0 bg-white w-full md:border-t-2 px-4 md:px-10 lg:px-16 mt-10 md:mt-auto">
             {isOwner ? (
               <>
                 {nft?.status === NFTStatusEnum.CREATED && (
