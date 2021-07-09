@@ -50,14 +50,14 @@ export default function HomeListingGridItem({
         >
           {item.title}
         </Typography>
-        <Link href={`user/${item.user._id}`}>
+        {/* <Link href={`user/${item.user._id}`}> */}
           <Flex style="mb-3 mt-1">
             <CardAvatar image={item.user?.avatar} name={item.user?.name} />
             <Typography truncate textWidth={"w-24"} sub>
               {item.user.name}
             </Typography>
           </Flex>
-        </Link>
+        {/* </Link> */}
 
         <Typography bold>
           {getPrice().amount || 0} {getPrice().currency}

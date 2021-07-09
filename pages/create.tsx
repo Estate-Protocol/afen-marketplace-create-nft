@@ -8,12 +8,13 @@ import useNotifier from "../hooks/useNotifier";
 import useContract from "../hooks/useContract";
 import useUser from "../hooks/useUser";
 import { useRouter } from "next/router";
-import { NFT } from "../types/NFT";
+import { NFT, NFTStatusEnum } from "../types/NFT";
 import useAuth from "../hooks/useAuth";
 import withAuth from "../components/HOC/withAuth";
 import { messages } from "../constants/messages";
 import cookieCutter from "cookie-cutter";
 import { authCookieName } from "../components/Auth/apis/auth";
+import { updateNFT } from "../components/NFT/apis";
 
 export interface CreateFormResponse {
   title?: string;
@@ -48,24 +49,35 @@ export const Create: React.FC = () => {
     formData.append("afenPrice", data.afenPrice.toString());
     formData.append("bnbPrice", data.bnbPrice.toString());
     formData.append("userId", userId);
-    const response = await api.post("/nft/create/", formData, {
-      headers: {
-        "Content-type": "multipart/form-data",
-        type: "formData",
-        Authorization: `JWT ${token}`,
-      },
-    });
 
-    if (response.status === 200) {
-      setMessage({
-        text: "Art Saved",
-        status: "success",
+    try {
+      const response = await api.post("/nft/create/", formData, {
+        headers: {
+          "Content-type": "multipart/form-data",
+          type: "formData",
+          Authorization: `JWT ${token}`,
+        },
       });
-    } else if (response.status === 422) {
-      notify(messages.nftExists);
-    }
 
-    return response.data.nft;
+      if (response.status === 200) {
+        setMessage({
+          text: "Art Saved",
+          status: "success",
+        });
+      }
+
+      return response.data.nft;
+    } catch (err) {
+      setLoading(false);
+      if (err?.response?.status === 401) {
+        notify(messages.sessionExpired);
+        logout();
+      } else if (err?.response?.status === 422) {
+        notify(messages.nftExists);
+      } else {
+        notify(messages.somethingWentWrong);
+      }
+    }
   };
 
   const createNFT = async (
@@ -78,10 +90,7 @@ export const Create: React.FC = () => {
     const priceB = BigNumber.from(bnb);
 
     const value = await contract.create_nft(nft.fileHash, priceA, priceB);
-    contract
-      .get_nft_list_size()
-      .then((response) => console.log("finally", response, response.toString()))
-      .catch((err) => console.log(err));
+    const nft_id = await contract.get_nft_list_size();
 
     if (value.hash) {
       setTimeout(() => {
@@ -93,27 +102,27 @@ export const Create: React.FC = () => {
     }
 
     // @ts-ignore
-    return value;
+    return { ...value, nft_id: nft_id.toString() };
   };
 
-  const mintNFT = async (
-    nftId: string,
-    price,
-    selectedCurrency: number,
-    contract: Nft
-  ): Promise<ContractTransaction> => {
-    price = BigNumber.from(price);
-    const mint = await contract.mint(nftId, price, selectedCurrency);
+  // const mintNFT = async (
+  //   nftId: string,
+  //   price,
+  //   selectedCurrency: number,
+  //   contract: Nft
+  // ): Promise<ContractTransaction> => {
+  //   price = BigNumber.from(price);
+  //   const mint = await contract.mint(nftId, price, selectedCurrency);
 
-    if (mint.hash) {
-      setMessage({
-        text: "Congratulation, NFT created.",
-        status: "success",
-      });
-    }
+  //   if (mint.hash) {
+  //     setMessage({
+  //       text: "Congratulation, NFT created.",
+  //       status: "success",
+  //     });
+  //   }
 
-    return mint;
-  };
+  //   return mint;
+  // };
 
   const handleSubmit = async (data: CreateFormInput) => {
     if (!isAuthenticated) {
@@ -130,22 +139,22 @@ export const Create: React.FC = () => {
       });
     }
 
+    setLoading(true);
+    const nftContract = contractSigned as Nft;
+
+    let price = 0;
+
+    if (data.currencySelected === "AFEN") {
+      data.bnbPrice = 0;
+      price = data.afenPrice;
+    } else {
+      data.afenPrice = 0;
+      price = data.bnbPrice;
+    }
+
+    const nft = await saveNFT(data);
+
     try {
-      setLoading(true);
-      const nftContract = contractSigned as Nft;
-
-      let price = 0;
-
-      if (data.currencySelected === "AFEN") {
-        data.bnbPrice = 0;
-        price = data.afenPrice;
-      } else {
-        data.afenPrice = 0;
-        price = data.bnbPrice;
-      }
-
-      const nft = await saveNFT(data);
-
       if (nft) {
         const createdNft = await createNFT(
           nft,
@@ -155,34 +164,38 @@ export const Create: React.FC = () => {
         );
 
         if (createdNft.hash && nft) {
-          // update nftId
-          const response = await api.post(
-            "/nft/update/",
-            // @ts-ignore
-            { nftId: value.nft_id }
-          );
-
-          const mintedNFT = await mintNFT(
-            createdNft.nft_id,
-            price,
-            data.currencySelected === "AFEN" ? 0 : 1,
-            nftContract
-          );
-
-          if (mintedNFT) {
-            notify({
-              status: "success",
-              title: "Done!",
-              text: "Your NFT had been minted",
+          // update nftId and status
+          await updateNFT(
+            {
+              _id: nft._id,
+              nftId: parseInt(createdNft.nft_id),
+              status: NFTStatusEnum.CREATED,
+            },
+            token
+          )
+            .then((response) => {
+              notify({
+                status: "success",
+                title: "Done!",
+                text: "Your NFT had been created",
+                action: {
+                  onClick: () => router.push(`/nft/${nft?._id}`),
+                  text: "View NFT",
+                },
+              });
+            })
+            .catch(() => {
+              notify(messages.somethingWentWrong);
             });
-            router.push(`/nft/${nft?._id}`);
-          }
         }
       }
     } catch (err) {
-      console.log(err);
+      setLoading(false);
+      console.log(err, err.name);
       if (err.code === 4001) {
         notify(messages.requestCancelled);
+      } else if ((err.code = "NETWORK_ERROR")) {
+        notify(messages.walletNetworkError);
       } else if (err?.response?.status === 401) {
         notify(messages.sessionExpired);
         logout();
@@ -190,7 +203,6 @@ export const Create: React.FC = () => {
         notify(messages.somethingWentWrong);
       }
     }
-    setLoading(false);
   };
 
   return (

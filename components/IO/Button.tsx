@@ -74,8 +74,8 @@ export default function Button({
         break;
       case ButtonType.OUTLINED:
         buttonStyle += classNames(
-          "px-5 py-2 rounded-full border-2 border-black",
-          { "border-gray-500 cursor-default": disabled }
+          "px-5 py-2 text-black rounded-full border-2 border-black",
+          { "border-gray-500 text-gray-500 cursor-default": disabled }
         );
         break;
       case ButtonType.PLAIN:

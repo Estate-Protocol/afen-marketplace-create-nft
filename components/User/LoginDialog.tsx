@@ -60,7 +60,7 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
     });
   };
 
-  const disabled = validateEmail(email) || validatePassword(password);
+  const disabled = !email.length || !password.length;
 
   return (
     <Dialog onCloseDialog={toggle} isOpen={isOpen}>

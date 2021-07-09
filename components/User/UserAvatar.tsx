@@ -17,7 +17,7 @@ export default function UserAvatar({ name, image, imageAlt }: UserAvatarProps) {
   return (
     <div
       className={classNames(
-        "w-7 h-7 bg-gray-200 relative overflow-hidden flex justify-center rounded-full mr-1"
+        "w-7 h-7 bg-gray-200 relative overflow-hidden flex justify-center items-center rounded-full mr-1"
       )}
     >
       {image ? (

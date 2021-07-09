@@ -71,7 +71,7 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const { notify } = useNotifier();
   const mobile = isMobile();
-  const { logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const userId =
     typeof window !== "undefined" ? localStorage.getItem("userId") : null;
@@ -91,27 +91,23 @@ export const UserProvider: React.FC = ({ children }) => {
           }
         });
     }
-  }, [userId]);
+  }, [userId, isAuthenticated]);
 
   React.useEffect(() => {
-    if (userId) {
-      try {
-        // @ts-ignore
-        window.ethereum
-          .request({
-            method: "eth_requestAccounts",
-          })
-          .then(() => {
-            setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
-          })
-          .catch(() => {
-            notify(messages.walletConnectionError);
-          });
-      } catch (err) {
-        notify(messages.walletConnectionError);
-      }
+    if (userId && isAuthenticated) {
+      // @ts-ignore
+      window.ethereum
+        .request({
+          method: "eth_requestAccounts",
+        })
+        .then(() => {
+          setProvider(new ethers.providers.Web3Provider(window["ethereum"]));
+        })
+        .catch(() => {
+          notify(messages.walletConnectionError);
+        });
     }
-  }, []);
+  }, [isAuthenticated]);
 
   React.useEffect(() => {
     if (provider) {

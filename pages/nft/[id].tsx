@@ -21,6 +21,7 @@ import { messages } from "../../constants/messages";
 import { createNFT, mintNFT } from "../../components/NFT/utils";
 import { Nft } from "../../contracts/types";
 import { NFT_ABI } from "../../contracts/abis/Nft";
+import UserAvatar from "../../components/User/UserAvatar";
 
 interface NFTPageProps {
   nft: NFT;
@@ -237,13 +238,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
               </Title>
               {/* <Link href={`/user/${nft?.user._id}`}> */}
               <div className="flex items-end mt-1 cursor-pointer">
-                <div className="w-6 h-6 relative overflow-hidden rounded-full mr-1">
-                  <Image
-                    src={nft?.user.avatar}
-                    layout="fill"
-                    objectFit="cover"
-                  ></Image>
-                </div>
+                <UserAvatar image={nft?.user.avatar} name={nft?.user.name} />
                 <Typography sub bold truncate textWidth="w-40">
                   {nft?.user.name}
                 </Typography>
@@ -375,7 +370,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                 </Button>
                 {!nft?.canSell && (
                   <Typography sub size="x-small" style="text-center">
-                    This NFT is available for sale
+                    This NFT is not available for sale
                   </Typography>
                 )}
               </>
