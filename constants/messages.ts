@@ -56,4 +56,9 @@ export const messages = {
     title: "NFT exists",
     text: "An NFT with this image already exist, please use another image.",
   },
+  minted: {
+    status: NotificationDataStatusEnum.SUCCESS,
+    title: "Done!",
+    text: "This NFT is now available for sale on the Marketplace",
+  },
 };

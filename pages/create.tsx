@@ -173,7 +173,7 @@ export const Create: React.FC = () => {
             },
             token
           )
-            .then((response) => {
+            .then(() => {
               notify({
                 status: "success",
                 title: "Done!",

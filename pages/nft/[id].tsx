@@ -11,17 +11,25 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import moment from "moment";
 import { BsArrowUpRight } from "react-icons/bs";
-import { NFT, NFTStatusEnum, NFTTransaction } from "../../types/NFT";
+import {
+  NFT,
+  NFTStatusEnum,
+  NFTTransaction,
+  NFTTransactionEnum,
+} from "../../types/NFT";
 import Button from "../../components/IO/Button";
 import useUser from "../../hooks/useUser";
 import useContract from "../../hooks/useContract";
 import useAuth from "../../hooks/useAuth";
 import useNotifier from "../../hooks/useNotifier";
 import { messages } from "../../constants/messages";
-import { createNFT, mintNFT } from "../../components/NFT/utils";
+import { mintNFT } from "../../components/NFT/utils";
 import { Nft } from "../../contracts/types";
 import { NFT_ABI } from "../../contracts/abis/Nft";
 import UserAvatar from "../../components/User/UserAvatar";
+import { ContractTransaction } from "ethers";
+import { createTransaction, updateNFT } from "../../components/NFT/apis";
+import { logout } from "../../components/Auth/apis/auth";
 
 interface NFTPageProps {
   nft: NFT;
@@ -86,14 +94,13 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const [minting, setMinting] = React.useState(false);
 
   const { user, connectWallet } = useUser();
-  const { isAuthenticated, toggleLoginDialog } = useAuth();
+  const { authToken, isAuthenticated, toggleLoginDialog } = useAuth();
   const { setAbi, contractSigned } = useContract();
   const { notify } = useNotifier();
 
   const tabs = ["Description", "Transaction", "Details"];
-  const isOwner = user?.user?._id === nft?.user?._id;
-
-  const disabled = isOwner || !nft?.canSell;
+  const isOwner = isAuthenticated && user?.user?._id === nft?.user?._id;
+  const canSell = nft?.status === NFTStatusEnum.MINTED && nft?.canSell;
 
   React.useEffect(() => {
     setAbi(NFT_ABI);
@@ -117,7 +124,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
 
   const tokenId = getPrice().currency === "AFEN" ? 0 : 1;
 
-  const handleClick = async () => {
+  const userCheck = () => {
     if (!isAuthenticated) {
       return toggleLoginDialog(true);
     }
@@ -131,7 +138,10 @@ export default function Token({ nft, transactions }: NFTPageProps) {
         },
       });
     }
+  };
 
+  const onBuyNFT = async () => {
+    userCheck();
     notify({
       title: `Buy "${nft.title}"`,
       text: "You are about to buy this NFT, click continue to proceed",
@@ -175,37 +185,72 @@ export default function Token({ nft, transactions }: NFTPageProps) {
         ...messages.transactionError,
         action: {
           text: "Retry",
-          onClick: handleClick,
+          onClick: onBuyNFT,
         },
       });
     }
     setLoading(false);
   };
 
+  const onMintNFT = () => {
+    // userCheck();
+    notify({
+      title: `Sell "${nft?.title}"`,
+      text: "You're about to list this NFT for sale on the Marketplace, click Continue to proceed",
+      action: {
+        onClick: () => handleMintNFT(),
+        text: "Continue",
+      },
+    });
+  };
+
+  const handleMintSuccess = (mint: ContractTransaction) => {
+    createTransaction(
+      {
+        userId: user?.user._id,
+        type: NFTTransactionEnum.MINT,
+        nftId: nft?._id,
+        price: getPrice().amount,
+      },
+      authToken
+    )
+      .then(() => notify(messages.minted))
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          logout();
+          notify(messages.sessionExpired);
+        }
+        notify(messages.somethingWentWrong);
+      });
+
+    updateNFT({
+      _id: nft?._id,
+      nftId: nft?.nftId,
+      canSell: true,
+      status: NFTStatusEnum.MINTED,
+    }).catch((err) => {
+      if (err?.response?.status === 401) {
+        logout();
+        notify(messages.sessionExpired);
+      }
+      notify(messages.somethingWentWrong);
+    });
+  };
+
   const handleMintNFT = async () => {
     const nftContract = contractSigned as Nft;
     setMinting(true);
-    const created = await createNFT(nft, nftContract, null, () => {
-      notify(messages.somethingWentWrong);
-    });
 
-    if (created) {
-      const minted = await mintNFT(
-        created.nft_id,
-        getPrice().amount,
-        getPrice().currency === "AFEN" ? 0 : 1,
-        nftContract,
-        null,
-        () => {
-          notify(messages.somethingWentWrong);
-        }
-      );
-
-      if (minted) {
-        // refetch
-        notify(messages.savedChanges);
+    await mintNFT(
+      nft.nftId,
+      getPrice().amount,
+      getPrice().currency === "AFEN" ? 0 : 1,
+      nftContract,
+      handleMintSuccess,
+      () => {
+        notify(messages.somethingWentWrong);
       }
-    }
+    );
 
     setMinting(false);
   };
@@ -329,46 +374,55 @@ export default function Token({ nft, transactions }: NFTPageProps) {
             /> */}
             {isOwner ? (
               <>
-                {nft?.status === NFTStatusEnum.UPLOADED && (
-                  <Button
-                    block
-                    type="outlined"
-                    size="large"
-                    style="mb-4"
-                    onClick={handleMintNFT}
-                    loading={minting}
-                  >
-                    Mint NFT
-                  </Button>
+                {nft?.status === NFTStatusEnum.CREATED && (
+                  <>
+                    <Button
+                      block
+                      type="outlined"
+                      size="large"
+                      style="mb-4"
+                      onClick={onMintNFT}
+                      loading={minting}
+                    >
+                      Sell
+                    </Button>
+                    <Typography sub size="x-small" style="text-center">
+                      This would make your NFT available on the Marketplace
+                    </Typography>
+                  </>
                 )}
-                <Button
-                  block
-                  type="secondary"
-                  size="large"
-                  style="mb-4"
-                  onClick={handleClick}
-                  loading={loading}
-                  disabled={disabled || !!nft.nftId}
-                >
-                  Disable
-                </Button>
-                <Typography sub size="x-small" style="text-center">
-                  You can list or unlist your NFT on the market
-                </Typography>
+                {nft?.status === NFTStatusEnum.MINTED && nft?.canSell && (
+                  <>
+                    <Button
+                      block
+                      type="delete"
+                      size="large"
+                      style="mb-4"
+                      onClick={onBuyNFT}
+                      loading={loading}
+                      disabled={!canSell}
+                    >
+                      Remove from Marketplace
+                    </Button>
+                    <Typography sub size="x-small" style="text-center">
+                      This would take your NFT off the Marketplace
+                    </Typography>
+                  </>
+                )}
               </>
             ) : (
               <>
                 <Button
                   block
                   size="large"
-                  onClick={handleClick}
+                  onClick={onBuyNFT}
                   loading={loading}
                   style="mb-4"
-                  disabled={disabled || !!nft.nftId}
+                  disabled={!canSell}
                 >
-                  {isOwner ? "Sell" : "Buy"}
+                  Buy
                 </Button>
-                {!nft?.canSell && (
+                {!canSell && (
                   <Typography sub size="x-small" style="text-center">
                     This NFT is not available for sale
                   </Typography>

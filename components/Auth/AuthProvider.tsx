@@ -14,6 +14,7 @@ export interface IAuthContext {
   isAuthenticated: boolean;
   loginDialog: boolean;
   registerDialog: boolean;
+  authToken: string | null;
   message: MessageProps | null;
   setIsAuthenticated: (value?: boolean) => void;
   toggleLoginDialog: (value?: boolean) => void;
@@ -28,6 +29,7 @@ export const AuthContext = React.createContext<IAuthContext>({
   loginDialog: false,
   registerDialog: false,
   message: null,
+  authToken: null,
   setIsAuthenticated: undefined,
   toggleLoginDialog: undefined,
   toggleRegisterDialog: undefined,
@@ -41,6 +43,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [loginDialog, setLoginDialog] = useState<boolean>(false);
   const [registerDialog, setRegisterDialog] = useState<boolean>(false);
   const [message, setMessage] = useState<MessageProps>(null);
+  const [authToken, setAuthToken] = useState(null);
 
   const { data: notification } = useNotifier();
   const { setUser, disconnectWallet } = useUser();
@@ -50,24 +53,11 @@ export const AuthProvider: React.FC = ({ children }) => {
       const token = cookieCutter.get(authCookieName);
       const userId = localStorage.getItem("userId");
       if (token && userId) {
+        setAuthToken(token);
         setIsAuthenticated(true);
       }
     }
   });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      const token = cookieCutter.get(authCookieName);
-      const userId = localStorage.getItem("userId");
-      getUser(userId, token)
-        .then((response) => setUser(response))
-        .catch((err) => {
-          if (err.response.status === 401) {
-            logout();
-          }
-        });
-    }
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (notification) {
@@ -90,6 +80,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     await login(data)
       .then((responseData) => {
         setIsAuthenticated(true);
+        setAuthToken(responseData.data.token);
         localStorage.setItem("userId", responseData.data.user._id);
         return setLoginDialog(false);
       })
@@ -126,6 +117,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     logout();
     localStorage.removeItem("userId");
     setUser(null);
+    setAuthToken(null);
     disconnectWallet();
     setIsAuthenticated(false);
   };
@@ -137,6 +129,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         loginDialog,
         registerDialog,
         message,
+        authToken,
         setIsAuthenticated,
         toggleLoginDialog: (value) => setLoginDialog(value || !loginDialog),
         toggleRegisterDialog: (value) =>

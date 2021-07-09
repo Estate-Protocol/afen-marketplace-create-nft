@@ -24,6 +24,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
           style={classNames({
             "text-red-500": data.status && data.status === "error",
             "text-green-500": data.status && data.status === "success",
+            "text-blue-500": data.status && data.status === "info",
           })}
         >
           {data.title}

@@ -3,7 +3,7 @@ import { Nft } from "../../contracts/types";
 import { NFT } from "../../types/NFT";
 
 export const mintNFT = async (
-  nftId: string,
+  nftId: number,
   price: number,
   selectedCurrency: number,
   contract: Nft,

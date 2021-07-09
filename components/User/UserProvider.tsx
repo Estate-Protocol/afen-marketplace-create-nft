@@ -156,7 +156,9 @@ export const UserProvider: React.FC = ({ children }) => {
   const disconnectWallet = () => {
     setAddress(null);
     setBalance(0);
+    setUser(null);
     localStorage.removeItem("user");
+    console.log("disconnecting", user);
   };
 
   const connectWallet = async () => {
