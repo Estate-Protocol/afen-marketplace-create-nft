@@ -183,15 +183,26 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       setLoading(false);
       // catch error cases
       // - insufficient funds
-      // - wrong network
-      // - request cancelled
-      return notify({
-        ...messages.transactionError,
-        action: {
-          text: "Retry",
-          onClick: onBuyNFT,
-        },
-      });
+      if (err.code === 4001) {
+        notify({
+          ...messages.requestCancelled,
+        });
+      } else if ((err.code = "NETWORK_ERROR")) {
+        notify({
+          ...messages.networkError,
+        });
+      } else if (err?.response?.status === 401) {
+        notify(messages.sessionExpired);
+        logout();
+      } else {
+        notify({
+          ...messages.transactionError,
+          action: {
+            text: "Retry",
+            onClick: onBuyNFT,
+          },
+        });
+      }
     }
     setLoading(false);
   };
@@ -477,7 +488,9 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                           image={nft?.owner.avatar}
                           name={nft?.owner.name}
                         />
-                        <Typography>{nft?.owner.name}</Typography>
+                        <Typography sub bold>
+                          {nft?.owner.name}
+                        </Typography>
                       </Flex>
                     </div>
                     <div className="mb-4">
@@ -489,7 +502,9 @@ export default function Token({ nft, transactions }: NFTPageProps) {
                           image={nft?.creator.avatar}
                           name={nft?.creator.name}
                         />
-                        <Typography>{nft?.creator.name}</Typography>
+                        <Typography sub bold>
+                          {nft?.creator.name}
+                        </Typography>
                       </Flex>
                     </div>
                     <div className="mb-4">
