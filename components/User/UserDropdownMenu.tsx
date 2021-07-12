@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Typography from "../IO/Typography";
 import Button from "../IO/Button";
-import { userLinks } from "../../constants/link";
+import { userLinks } from "../../constants/links";
 import { UserDetails } from "./UserProvider";
 import { copyToClipboard, getInitials } from "../../utils/misc";
 import { HiDuplicate } from "react-icons/hi";
