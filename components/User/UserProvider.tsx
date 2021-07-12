@@ -96,8 +96,8 @@ export const UserProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     if (userId && isAuthenticated) {
       // @ts-ignore
-      window.ethereum
-        .request({
+      window?.ethereum
+        ?.request({
           method: "eth_requestAccounts",
         })
         .then(() => {
@@ -110,9 +110,21 @@ export const UserProvider: React.FC = ({ children }) => {
   }, [isAuthenticated]);
 
   React.useEffect(() => {
-    if (provider) {
-      setSigner(provider.getSigner());
-      getBalance();
+    try {
+      if (provider) {
+        setSigner(provider.getSigner());
+        getBalance();
+      }
+    } catch (err) {
+      if ((err.code = "NETWORK_ERROR")) {
+        notify({
+          ...messages.walletNetworkError,
+        });
+      } else {
+        notify({
+          ...messages.somethingWentWrong,
+        });
+      }
     }
   }, [provider]);
 
@@ -158,7 +170,6 @@ export const UserProvider: React.FC = ({ children }) => {
     setBalance(0);
     setUser(null);
     localStorage.removeItem("user");
-    console.log("disconnecting", user);
   };
 
   const connectWallet = async () => {
@@ -168,13 +179,17 @@ export const UserProvider: React.FC = ({ children }) => {
         throw new Error("Install MetaMask");
       }
 
-      // @ts-ignore
-      window.ethereum.enable().then(
-        setProvider(
-          // @ts-ignore
-          new ethers.providers.Web3Provider(window.ethereum)
-        )
-      );
+      if (isMobile()) {
+        walletConnect.walletConnectInit();
+      } else {
+        // @ts-ignore
+        window.ethereum.enable().then(
+          setProvider(
+            // @ts-ignore
+            new ethers.providers.Web3Provider(window.ethereum)
+          )
+        );
+      }
 
       setSigner(provider?.getSigner());
 

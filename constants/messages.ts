@@ -9,7 +9,7 @@ export const messages = {
   walletNetworkErrorArtSaved: {
     status: NotificationDataStatusEnum.ERROR,
     title: "Wrong Network",
-    text: "Please change network. Do not worry, you art has been saved. Please try again later",
+    text: "Do not worry, you art has been saved. Please change network and try again later",
   },
   networkError: {
     status: NotificationDataStatusEnum.ERROR,

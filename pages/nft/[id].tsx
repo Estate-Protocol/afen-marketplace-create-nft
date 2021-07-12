@@ -104,8 +104,6 @@ export default function Token({ nft, transactions }: NFTPageProps) {
   const isOwner = isAuthenticated && user?.user?._id === nft?.owner?._id;
   const canSell = nft?.status === NFTStatusEnum.MINTED && nft?.canSell;
 
-  console.log(user?.user?._id, nft?.owner?._id);
-
   React.useEffect(() => {
     setAbi(NFT_ABI);
   }, []);
@@ -298,8 +296,14 @@ export default function Token({ nft, transactions }: NFTPageProps) {
       nftContract,
       (response) =>
         handleSuccess(NFTTransactionEnum.CREATE, NFTStatusEnum.CREATED),
-      () => {
-        notify(messages.somethingWentWrong);
+      (err) => {
+        if ((err.code = "NETWORK_ERROR")) {
+          notify(
+            messages.walletNetworkError,
+          );
+        } else {
+          notify(messages.somethingWentWrong);
+        }
       }
     );
 
