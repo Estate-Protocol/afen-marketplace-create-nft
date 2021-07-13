@@ -64,6 +64,11 @@ export default function Layout({ children }) {
             as="font"
             crossOrigin=""
           />
+          <script
+            async
+            src="https://platform.twitter.com/widgets.js"
+            charSet="utf-8"
+          ></script>
           <meta
             content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
             name="viewport"

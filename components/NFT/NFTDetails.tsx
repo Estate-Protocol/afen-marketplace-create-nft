@@ -1,13 +1,14 @@
 import React from "react";
-import { NFT, NFTStatusEnum, NFTTransaction } from "../../types/NFT";
-import Button from "../IO/Button";
+import { NFT, NFTTransaction } from "../../types/NFT";
 import Title from "../IO/Title";
 import Typography from "../IO/Typography";
 import Flex from "../Layout/Flex";
 import Tabs from "../Tabs/Tabs";
 import UserAvatar from "../User/UserAvatar";
+import NFTActions from "./NFTActions";
 import { NFTDescriptionTab } from "./NFTDescriptionTab";
 import NFTDetailsTab from "./NFTDetailsTab";
+import NFTShareDialog from "./NFTShareDialog";
 import NFTTransactionTab from "./NFTTransactionTab";
 
 interface NFTDetails {
@@ -25,6 +26,7 @@ interface NFTDetails {
   onCreateNFT: () => void;
   onRemoveFromMarketplace: () => void;
   onAddToMarketplace: () => void;
+  onTweet: () => void;
 }
 
 const NfTDetails: React.FC<NFTDetails> = ({
@@ -39,29 +41,31 @@ const NfTDetails: React.FC<NFTDetails> = ({
   onCreateNFT,
   onRemoveFromMarketplace,
   onAddToMarketplace,
+  onTweet,
 }) => {
-  const tabs = ["Description", "Transactions", "Details"];
-
   return (
     <div className="relative w-full mb-10 md:w-2/5 lg:w-2/6 sm:mt-16 md:mt-32 flex flex-col mx-auto overflow-hidden">
       <div className="px-4 md:px-10 lg:px-16">
-        <Flex spaceBetween wrap start style="mb-4 w-full">
-          <div className="mb-2">
-            <Title style="text-2xl md:text-3xl font-semibold mb-1">
-              {nft?.title}
-            </Title>
-
-            <div className="flex items-end mt-1">
-              <UserAvatar
-                image={nft?.creator?.avatar}
-                name={nft?.creator?.name}
-              />
-              <Typography sub bold truncate textWidth="w-40">
-                {nft?.creator.name}
-              </Typography>
+        <div className="mb-4">
+          <Flex spaceBetween wrap center style="w-full">
+            <div className="mb-2 w-4/5">
+              <Title style="text-2xl md:text-3xl font-semibold">
+                {nft?.title}
+              </Title>
             </div>
+            <NFTShareDialog nft={nft} />
+          </Flex>
+
+          <div className="flex items-end mt-1">
+            <UserAvatar
+              image={nft?.creator?.avatar}
+              name={nft?.creator?.name}
+            />
+            <Typography sub bold truncate textWidth="w-40">
+              {nft?.creator.name}
+            </Typography>
           </div>
-        </Flex>
+        </div>
         <div>
           <Typography sub bold size="small">
             Price
@@ -78,7 +82,7 @@ const NfTDetails: React.FC<NFTDetails> = ({
                 body: <NFTDescriptionTab nft={nft} />,
               },
               {
-                title: "Transacions",
+                title: "Transactions",
                 body: <NFTTransactionTab transactions={transactions} />,
               },
               {
@@ -89,100 +93,18 @@ const NfTDetails: React.FC<NFTDetails> = ({
           ></Tabs>
         </div>
       </div>
-
-      <div className="pt-10 md:pt-4 md:absolute md:bottom-0 bg-white w-full md:border-t-2 px-4 md:px-10 lg:px-16 mt-10 md:mt-auto">
-        {isOwner ? (
-          <>
-            {nft?.status === NFTStatusEnum.UPLOADED && (
-              <>
-                <Button
-                  block
-                  type="outlined"
-                  size="large"
-                  style="mb-4"
-                  onClick={onCreateNFT}
-                  loading={loading}
-                >
-                  Create NFT
-                </Button>
-                <Typography sub size="x-small" style="text-center">
-                  You are seeing this because creating NFT for this was not
-                  successful, try again
-                </Typography>
-              </>
-            )}
-            {nft?.status === NFTStatusEnum.CREATED && (
-              <>
-                <Button
-                  block
-                  type="outlined"
-                  size="large"
-                  style="mb-4"
-                  onClick={onMintNFT}
-                  loading={loading}
-                >
-                  Sell
-                </Button>
-                <Typography sub size="x-small" style="text-center">
-                  This would make your NFT available on the Marketplace
-                </Typography>
-              </>
-            )}
-            {nft?.status === NFTStatusEnum.MINTED && nft?.canSell && (
-              <>
-                <Button
-                  block
-                  type="delete"
-                  size="large"
-                  style="mb-4"
-                  onClick={onRemoveFromMarketplace}
-                  loading={loading}
-                  disabled={!canSell}
-                >
-                  Remove from Marketplace
-                </Button>
-                <Typography sub size="x-small" style="text-center">
-                  This would take your NFT off the Marketplace
-                </Typography>
-              </>
-            )}
-            {nft?.status === NFTStatusEnum.MINTED && !nft?.canSell && (
-              <>
-                <Button
-                  block
-                  size="large"
-                  style="mb-4"
-                  onClick={onAddToMarketplace}
-                  loading={loading}
-                >
-                  Add to Marketplace
-                </Button>
-                <Typography sub size="x-small" style="text-center">
-                  This would list your NFT on the Marketplace
-                </Typography>
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            <Button
-              block
-              size="large"
-              onClick={onBuyNFT}
-              loading={loading}
-              style="mb-4"
-              disabled={!canSell}
-            >
-              Buy
-            </Button>
-            {!canSell && (
-              <Typography sub size="x-small" style="text-center">
-                This NFT is not available for sale
-              </Typography>
-            )}
-          </>
-        )}
-      </div>
+      <NFTActions
+        nft={nft}
+        status={nft?.status}
+        loading={loading}
+        isOwner={isOwner}
+        canSell={canSell}
+        onBuyNFT={onBuyNFT}
+        onMintNFT={onMintNFT}
+        onCreateNFT={onCreateNFT}
+        onRemoveFromMarketplace={onRemoveFromMarketplace}
+        onAddToMarketplace={onAddToMarketplace}
+      />
     </div>
   );
 };

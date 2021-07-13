@@ -22,6 +22,7 @@ import { logout } from "../../components/Auth/apis/auth";
 import { reloadPage } from "../../utils";
 import { NFTImage } from "../../components/NFT/NFTImage";
 import NFTDetails from "../../components/NFT/NFTDetails";
+import { copyToClipboard } from "../../utils/misc";
 
 interface NFTPageProps {
   nft: NFT;
@@ -82,6 +83,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 export default function Token({ nft, transactions }: NFTPageProps) {
   const { isFallback } = useRouter();
   const [loading, setLoading] = React.useState(false);
+  const [shareDialog, setShareDialog] = React.useState(false);
   const { user, connectWallet } = useUser();
   const { authToken, isAuthenticated, toggleLoginDialog } = useAuth();
   const { setAbi, contractSigned } = useContract();
@@ -382,6 +384,7 @@ export default function Token({ nft, transactions }: NFTPageProps) {
           onCreateNFT={onCreateNFT}
           onAddToMarketplace={onAddToMarketplace}
           onRemoveFromMarketplace={onRemoveFromMarketplace}
+          onTweet={() => setShareDialog(true)}
         />
       </div>
     </div>
