@@ -67,34 +67,35 @@ export default function Header() {
         <div className="ml-auto md:hidden">
           {mobileMenu ? (
             <GrClose
-              className="text-xl fill-current text-dark dark:text-white"
+              className="text-2xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(false)}
             />
           ) : (
             <GrMenu
-              className="text-xl fill-current text-dark dark:text-white"
+              className="text-2xl fill-current text-dark dark:text-white"
               onClick={() => setMobileMenu(true)}
             />
           )}
         </div>
 
-        <div className="md:inline-flex items-center ml-4 md:ml-auto">
+        <div className="md:inline-flex items-center md:ml-auto">
           <Typography style="hidden md:block mr-8" sub bold>
             <a href="https://link.medium.com/dJY0veBUlgb" target="_blank">
               Get Started
             </a>
           </Typography>
           <Button
-            style="mr-16 hidden md:block"
+            style="mr-8 hidden md:block"
             type="primary"
             onClick={() => router.push("/create")}
           >
             Create NFT
           </Button>
+
           {isAuthenticated ? (
-            <>
+            <div className="inline-flex items-center">
               <div
-                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer mr-4"
+                className="relative h-8 w-8 bg-gray-100 ring-2 ring-afen-yellow overflow-hidden flex justify-center items-center rounded-full cursor-pointer ml-4 md:ml-0"
                 onClick={() => router.push(`/user/${userData.user?._id}`)}
               >
                 {userData.user?.avatar ? (
@@ -105,17 +106,17 @@ export default function Header() {
                   </Typography>
                 )}
               </div>
-              <Button type="plain" onClick={() => logout()}>
+              <Button type="plain" style="ml-4" onClick={() => logout()}>
                 <FiLogOut className="text-2xl" />
               </Button>
-            </>
+            </div>
           ) : (
             <Button
               style="hidden md:block"
               type="outlined"
               onClick={() => toggleLoginDialog(true)}
             >
-              <Typography sub>Login</Typography>
+              Login
             </Button>
           )}
         </div>

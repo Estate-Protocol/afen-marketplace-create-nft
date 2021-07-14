@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ButtonType } from "../IO/Button";
 
 export enum NotificationDataStatusEnum {
   "ERROR" = "error",
@@ -7,10 +8,11 @@ export enum NotificationDataStatusEnum {
 }
 export interface NotificationData {
   status?: "error" | "success" | "info" | null;
-  title?: string;
-  text: string;
+  title?: React.ReactNode | string;
+  text: React.ReactNode | string;
   action?: {
     text: string;
+    buttonType?: ButtonType;
     onClick: () => void;
   };
 }

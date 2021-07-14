@@ -3,17 +3,18 @@ import { BaseComponent } from "../../types/BaseComponent";
 import Loader from "react-loader-spinner";
 import classNames from "classnames";
 
-enum ButtonType {
+export enum ButtonType {
   PRIMARY = "primary",
   SECONDARY = "secondary",
   OUTLINED = "outlined",
   PLAIN = "plain",
+  DELETE = "delete",
 }
 
 interface ButtonProps extends BaseComponent {
   id?: string;
   url?: string;
-  type?: "primary" | "secondary" | "outlined" | "plain";
+  type?: "primary" | "secondary" | "outlined" | "plain" | "delete";
   size?: "small" | "medium" | "large";
   variant?: "add" | "delete";
   hover?: boolean;
@@ -80,8 +81,14 @@ export default function Button({
         break;
       case ButtonType.PLAIN:
         buttonStyle += classNames(
-          `px-0 ${"hover:text-gray-600 dark:hover:text-gray-300"}`,
+          "px-0 hover:text-gray-600 dark:hover:text-gray-300",
           { "text-gray-400 cursor-default": disabled }
+        );
+        break;
+      case ButtonType.DELETE:
+        buttonStyle += classNames(
+          "px-5 py-2 bg-red-500 text-white rounded-full",
+          { "bg-red-400 text-gray-100 cursor-default": disabled }
         );
         break;
       default:

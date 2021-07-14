@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Typography from "../IO/Typography";
 import { slugifyText } from "../../utils/misc";
+import classNames from "classnames";
 
 interface TextAreaProps {
   label: string;
@@ -14,6 +15,7 @@ interface TextAreaProps {
   min?: number;
   max?: number;
   error?: string;
+  success?: string | boolean;
   persistDescription?: boolean;
   prepend?: ReactNode | string;
   onChange?: (text: any) => void;
@@ -29,6 +31,7 @@ export default function TextArea({
   required,
   disabled,
   error,
+  success,
   prepend,
   persistDescription,
   onChange,
@@ -41,7 +44,13 @@ export default function TextArea({
           {required && <span className="text-black dark:text-white"> *</span>}
         </Typography>
       </label>
-      <div className="inline-flex items-center w-full mt-2 border-2 dark:border-gray-500 rounded-xl px-4 py-2 focus:border-blue-500">
+      <div
+        className={classNames(
+          "inline-flex items-center w-full mt-2 border-2 dark:border-gray-500 rounded-xl px-4 py-2 focus:border-blue-500",
+          { "border-red-500": error },
+          { "border-green-500": success }
+        )}
+      >
         {icon}
         <textarea
           name={slugifyText(label)}

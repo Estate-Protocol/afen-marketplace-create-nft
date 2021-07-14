@@ -29,6 +29,9 @@ export interface CreateFormInput {
   }[];
 }
 
+const TITLE_LENGTH = 100;
+const DESCRIPTION_LENGTH = 1000;
+
 interface IProps {
   wallet: string;
   loading: boolean;
@@ -108,7 +111,9 @@ export default class CreateFormPage extends Component<IProps, IState> {
       this.state.title.length &&
       (this.state.afenPrice > 0 || this.state.bnbPrice > 0) &&
       this.state.royalty <= 20 &&
-      this.state.description?.length
+      this.state.description?.length &&
+      this.state.title.length <= TITLE_LENGTH &&
+      this.state.description.length <= DESCRIPTION_LENGTH
     );
   };
 
@@ -144,6 +149,44 @@ export default class CreateFormPage extends Component<IProps, IState> {
     this.setState({
       royalty: parseFloat(data),
     });
+  };
+
+  handleTitleInput = (title: string) => {
+    if (title.length > TITLE_LENGTH) {
+      this.setState({
+        errors: {
+          ...this.state.errors,
+          title: `Title should not be more than ${TITLE_LENGTH} characters`,
+        },
+      });
+    } else {
+      this.setState({
+        errors: {
+          ...this.state.errors,
+          title: null,
+        },
+      });
+    }
+    this.setState({ title });
+  };
+
+  handleDescriptionInput = (description: string) => {
+    if (description.length > DESCRIPTION_LENGTH) {
+      this.setState({
+        errors: {
+          ...this.state.errors,
+          description: `Description should not be more than ${DESCRIPTION_LENGTH} characters`,
+        },
+      });
+    } else {
+      this.setState({
+        errors: {
+          ...this.state.errors,
+          description: null,
+        },
+      });
+    }
+    this.setState({ description });
   };
 
   handlePriceSelection = (input: "AFEN" | "BNB") => {
@@ -324,7 +367,7 @@ export default class CreateFormPage extends Component<IProps, IState> {
                 </div>
               </div>
 
-              <div className="mt-5 sm:mt-0">
+              <div>
                 <div>
                   <div className="mt-2 lg:col-span-2">
                     <div className="overflow-hidden">
@@ -335,8 +378,10 @@ export default class CreateFormPage extends Component<IProps, IState> {
                             value={this.state.title}
                             type="text"
                             required
+                            max={TITLE_LENGTH}
+                            error={this.state?.errors?.title}
                             description="This is important because it would appear everywhere your art does"
-                            onChange={(data) => this.setState({ title: data })}
+                            onChange={this.handleTitleInput}
                           />
                         </div>
 
@@ -344,10 +389,10 @@ export default class CreateFormPage extends Component<IProps, IState> {
                           <TextArea
                             required
                             label={"Description"}
+                            max={DESCRIPTION_LENGTH}
                             value={this.state.description}
-                            onChange={(data) =>
-                              this.setState({ description: data })
-                            }
+                            error={this.state?.errors?.description}
+                            onChange={this.handleDescriptionInput}
                           />
                         </div>
                       </div>
@@ -454,9 +499,9 @@ export default class CreateFormPage extends Component<IProps, IState> {
             <div className="mt-3">
               <div>
                 <div className="">
-                  <Title style="text-xl font-semibold truncate overflow-ellipsis overflow-hidden mb-1">
+                  <Typography size="large" style="font-semibold mb-1">
                     {this.state?.title || "---"}
-                  </Title>
+                  </Typography>
                   <Flex
                     center
                     style="cursor-pointer"

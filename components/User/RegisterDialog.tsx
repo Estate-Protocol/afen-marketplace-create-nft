@@ -134,7 +134,7 @@ export const RegisterDialog: React.FC<RegisterDialogProps> = ({
           )}
           <div className="mt-4">
             <Button
-              type="secondary"
+              type="outlined"
               block
               icon
               style={classNames("mb-4", {

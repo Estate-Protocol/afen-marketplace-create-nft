@@ -4,6 +4,7 @@ import { NFT } from "../../types/NFT";
 import { CardMedia, CardText, CardAvatar } from "../Card";
 import Typography from "../IO/Typography";
 import Flex from "../Layout/Flex";
+import UserAvatar from "../User/UserAvatar";
 
 interface ListingGridItemProps {
   item: NFT;
@@ -51,12 +52,12 @@ export default function HomeListingGridItem({
           {item.title}
         </Typography>
         {/* <Link href={`user/${item.user._id}`}> */}
-          <Flex style="mb-3 mt-1">
-            <CardAvatar image={item.user?.avatar} name={item.user?.name} />
-            <Typography truncate textWidth={"w-24"} sub>
-              {item.user.name}
-            </Typography>
-          </Flex>
+        <Flex style="mb-3 mt-1">
+          <UserAvatar image={item.creator?.avatar} name={item.creator?.name} />
+          <Typography truncate textWidth="w-full" sub>
+            {item.creator.name}
+          </Typography>
+        </Flex>
         {/* </Link> */}
 
         <Typography bold>

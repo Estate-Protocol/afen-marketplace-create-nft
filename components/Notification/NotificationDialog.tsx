@@ -24,14 +24,17 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
           style={classNames({
             "text-red-500": data.status && data.status === "error",
             "text-green-500": data.status && data.status === "success",
+            "text-blue-500": data.status && data.status === "info",
           })}
         >
           {data.title}
         </Title>
-        <IoCloseSharp
-          className="text-3xl text-gray-400 cursor-pointer"
-          onClick={() => close()}
-        />
+        <div>
+          <IoCloseSharp
+            className="text-3xl text-gray-400 cursor-pointer"
+            onClick={() => close()}
+          />
+        </div>
       </Flex>
       <Typography sub bold style="mb-2">
         {data.text}
@@ -40,7 +43,7 @@ export const NotificationDialog: React.FC<NotificationDialogProps> = ({
         <Button
           block
           style="mt-3"
-          type="outlined"
+          type={data.action.buttonType || "outlined"}
           onClick={() => {
             data.action.onClick();
             close();

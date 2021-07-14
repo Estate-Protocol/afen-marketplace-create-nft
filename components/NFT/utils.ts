@@ -3,22 +3,19 @@ import { Nft } from "../../contracts/types";
 import { NFT } from "../../types/NFT";
 
 export const mintNFT = async (
-  nftId: string,
+  nftId: number,
   price: number,
   selectedCurrency: number,
   contract: Nft,
-  onCompleted?: (mint: ContractTransaction) => void,
+  onCompleted?: () => void,
   onError?: (err: any) => void
-): Promise<ContractTransaction> => {
+): Promise<void> => {
   try {
     const bigNumberPrice = BigNumber.from(price);
-    const mint = await contract.mint(nftId, bigNumberPrice, selectedCurrency);
 
-    if (mint.hash) {
-      onCompleted(mint);
-    }
+    await contract.mint(nftId, bigNumberPrice, selectedCurrency);
 
-    return mint;
+    onCompleted();
   } catch (err) {
     onError(err);
   }
@@ -47,7 +44,7 @@ export const createNFT = async (
     }
 
     // @ts-ignore
-    return value;
+    return { ...value, nft_id: nftId };
   } catch (err) {
     onError(err);
   }

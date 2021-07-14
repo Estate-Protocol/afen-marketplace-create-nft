@@ -18,7 +18,8 @@ export interface NFT extends BaseType {
   nftId: number;
   thumbnail?: string;
   canSell: boolean;
-  user: User;
+  creator: User;
+  owner: User;
   status: NFTStatusEnum;
 }
 
@@ -29,10 +30,12 @@ export interface NFTTransaction extends BaseType {
   price: number;
 }
 
-export interface NFTTransactionEnum {
-  BUY: "BUY";
-  SELL: "SELL";
-  BID: "BID";
+export enum NFTTransactionEnum {
+  BUY = "BUY",
+  SELL = "SELL",
+  BID = "BID",
+  CREATE = "CREATE",
+  MINT = "MINT",
 }
 
 export enum NFTStatusEnum {

@@ -48,7 +48,7 @@ export const Create: React.FC = () => {
     formData.append("description", data.description);
     formData.append("afenPrice", data.afenPrice.toString());
     formData.append("bnbPrice", data.bnbPrice.toString());
-    formData.append("userId", userId);
+    formData.append("creatorId", userId);
 
     try {
       const response = await api.post("/nft/create/", formData, {
@@ -105,25 +105,6 @@ export const Create: React.FC = () => {
     return { ...value, nft_id: nft_id.toString() };
   };
 
-  // const mintNFT = async (
-  //   nftId: string,
-  //   price,
-  //   selectedCurrency: number,
-  //   contract: Nft
-  // ): Promise<ContractTransaction> => {
-  //   price = BigNumber.from(price);
-  //   const mint = await contract.mint(nftId, price, selectedCurrency);
-
-  //   if (mint.hash) {
-  //     setMessage({
-  //       text: "Congratulation, NFT created.",
-  //       status: "success",
-  //     });
-  //   }
-
-  //   return mint;
-  // };
-
   const handleSubmit = async (data: CreateFormInput) => {
     if (!isAuthenticated) {
       return toggleLoginDialog(true);
@@ -154,6 +135,11 @@ export const Create: React.FC = () => {
 
     const nft = await saveNFT(data);
 
+    const handleSomethingWentWrongArtSaved = {
+      onClick: () => router.push(`/nft/${nft._id}`),
+      text: "View Art",
+    };
+
     try {
       if (nft) {
         const createdNft = await createNFT(
@@ -173,7 +159,7 @@ export const Create: React.FC = () => {
             },
             token
           )
-            .then((response) => {
+            .then(() => {
               notify({
                 status: "success",
                 title: "Done!",
@@ -185,22 +171,33 @@ export const Create: React.FC = () => {
               });
             })
             .catch(() => {
-              notify(messages.somethingWentWrong);
+              notify({
+                ...messages.somethingWentWrongArtSaved,
+                action: handleSomethingWentWrongArtSaved,
+              });
             });
         }
       }
     } catch (err) {
       setLoading(false);
-      console.log(err, err.name);
       if (err.code === 4001) {
-        notify(messages.requestCancelled);
+        notify({
+          ...messages.requestCancelledArtSaved,
+          action: handleSomethingWentWrongArtSaved,
+        });
       } else if ((err.code = "NETWORK_ERROR")) {
-        notify(messages.walletNetworkError);
+        notify({
+          ...messages.walletNetworkErrorArtSaved,
+          action: handleSomethingWentWrongArtSaved,
+        });
       } else if (err?.response?.status === 401) {
         notify(messages.sessionExpired);
         logout();
       } else {
-        notify(messages.somethingWentWrong);
+        notify({
+          ...messages.somethingWentWrongArtSaved,
+          action: handleSomethingWentWrongArtSaved,
+        });
       }
     }
   };

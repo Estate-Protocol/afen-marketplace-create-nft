@@ -6,6 +6,11 @@ export const messages = {
     title: "Wrong Network",
     text: "Please change network",
   },
+  walletNetworkErrorArtSaved: {
+    status: NotificationDataStatusEnum.ERROR,
+    title: "Wrong Network",
+    text: "Do not worry, you art has been saved. Please change network and try again later",
+  },
   networkError: {
     status: NotificationDataStatusEnum.ERROR,
     title: "Network Error",
@@ -31,6 +36,11 @@ export const messages = {
     title: "Something went wrong",
     text: "It is not you, it us. Please try again",
   },
+  somethingWentWrongArtSaved: {
+    status: NotificationDataStatusEnum.ERROR,
+    title: "Could not create NFT",
+    text: "Do not worry, you art has been saved. Please try again later",
+  },
   connectWallet: {
     status: NotificationDataStatusEnum.INFO,
     title: "Connect Wallet",
@@ -40,6 +50,11 @@ export const messages = {
     status: NotificationDataStatusEnum.INFO,
     title: "Action cancelled",
     text: "Try again to initiate action",
+  },
+  requestCancelledArtSaved: {
+    status: NotificationDataStatusEnum.INFO,
+    title: "Action cancelled",
+    text: "Try again to initiate action. Do not worry, you art has been saved. Please try again later",
   },
   savedChanges: {
     status: NotificationDataStatusEnum.SUCCESS,
@@ -55,5 +70,10 @@ export const messages = {
     status: NotificationDataStatusEnum.ERROR,
     title: "NFT exists",
     text: "An NFT with this image already exist, please use another image.",
+  },
+  minted: {
+    status: NotificationDataStatusEnum.SUCCESS,
+    title: "Done!",
+    text: "This NFT is now available for sale on the Marketplace",
   },
 };

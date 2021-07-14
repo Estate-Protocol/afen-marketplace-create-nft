@@ -19,7 +19,7 @@ export default function TabsComponent({ tabs }: TabsComponentProps) {
       selectedIndex={tabIndex}
       onSelect={(index) => setTabIndex(index)}
     >
-      <TabList className="border-none bg-opacity-100">
+      <TabList className="bg-opacity-100">
         {tabs.map(({ title, disabled }, index) => (
           <Tab
             disabled={disabled}
